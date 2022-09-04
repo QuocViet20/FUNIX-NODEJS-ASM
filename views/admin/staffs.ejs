@@ -1,0 +1,32 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+
+            <main>
+                <% if (staffs.length > 0) { %>
+                    <div class="grid">
+                        <% for (let staff of staffs) { %>
+                            <div class="card mb-3" style="max-width: 540px;">
+                                <div class="row g-0">
+                                  <div class="col-md-4">
+                                    <img src="<%= staff.imageUrl %>" class="img-fluid rounded-start" alt="...">
+                                  </div>
+                                  <div class="col-md-8">
+                                    <div class="card-body">
+                                      <h5 class="card-title"><%= staff.name %>></h5>
+                                      <p class="card-text">Ngày sinh: <%= staff.doB %></p>
+                                      <p class="card-text">Ngày vào công ty: <%= staff.startDate %></p>
+                                      <p class="card-text">Phòng ban: <%= staff.department %></p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            <% } %>
+                    </div>
+                    <% } else { %>
+                        <h1>No Products Found!</h1>
+                        <% } %>
+            </main>
+            <%- include('../includes/end.ejs') %>

@@ -1,0 +1,53 @@
+<%- include('../includes/head.ejs') %>
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+        <div class="container">
+            <h2 class="mt-2 d-flex justify-content-center text-uppercase">Thông tin covid</h2>
+            <hr/>
+            <div class="mt-2 pd-2 ">
+                <div style="font-size:25px">Tên nhân viên: <%= staff.name %></div>
+            
+                <div style="font-size:25px">Bộ phận: <%= staff.department%></div>
+            </div>
+            <hr/>
+            <h3 class="mt-2 d-flex justify-content-center text-uppercase text-center" style="font: size 20px;color: rgb(20, 181, 95);">Thông tin đã đăng ký covid cá nhân</h3>
+            
+                <div class="mt-2 d-flex justify-content-center">
+                    <div class="mt-4">
+                        <p style="font-size:25px">Ngày giờ đã đăng ký: <%= covidInfo.declareedDate.getDate().toString().concat("/"+(covidInfo.declareedDate.getMonth()+1)+"/"+covidInfo.declareedDate.getFullYear())%> <%= covidInfo.declareedDate.getHours().toString().concat("h").concat(covidInfo.declareedDate.getMinutes()>=10?covidInfo.declareedDate.getMinutes().toString():"0"+covidInfo.declareedDate.getMinutes())  %> <p>
+                        <p style="font-size:25px">Thân nhiệt: <%= covidInfo.temperature%> độ</p>
+                       <% if(covidInfo.vaccinnated[0]) {
+                        %>
+                        <p style="font-size:25px">Vaccine mũi 1: Đã tiêm </p>
+                        <p style="font-size:25px">Loại Vaccine: <%=covidInfo.vaccinnated[0].vaccineType %> </p>
+                        <p style="font-size:25px">Ngày tiêm: <%= covidInfo.vaccinnated[0].vaccinnatedDate.getDate().toString().concat("/"+(covidInfo.vaccinnated[0].vaccinnatedDate.getMonth()+1)+"/"+covidInfo.vaccinnated[0].vaccinnatedDate.getFullYear())%> </p>
+                        <%
+                       }else{
+                        %> 
+                        <p style="font-size:25px">Vaccine mũi 1:Chưa tiêm </p><%
+                       }
+                       %>
+
+                       <% if(covidInfo.vaccinnated[1]) {
+                        %>
+                        <p style="font-size:25px">Vaccine mũi 2: Đã tiêm </p>
+                        <p style="font-size:25px">Loại Vaccine: <%=covidInfo.vaccinnated[1].vaccineType %> </p>
+                        <p style="font-size:25px">Ngày tiêm: <%= covidInfo.vaccinnated[1].vaccinnatedDate.getDate().toString().concat("/"+(covidInfo.vaccinnated[1].vaccinnatedDate.getMonth()+1)+"/"+covidInfo.vaccinnated[1].vaccinnatedDate.getFullYear())%> </p>
+                        <%
+                       }else{
+                        %> 
+                        <p style="font-size:25px">Vaccine mũi 2:Chưa tiêm </p><%
+                       }
+                       %>
+                       
+                        <p style="font-size:25px">Kết quả test covid: <%= covidInfo.covidStatus ? "Dương tính":"Âm tính" %></p>
+                      
+                    </div>
+             </div>
+        </div>
+    </main>
+
+<%- include('../includes/end.ejs') %>

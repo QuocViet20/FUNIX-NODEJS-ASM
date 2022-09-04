@@ -1,0 +1,43 @@
+<%- include('../includes/head.ejs') %>
+ 
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main >
+        <div class="container">
+       
+        <h1 class="mt-2 d-flex justify-content-center text-uppercase">Đăng ký nghỉ phép</h1>
+        <hr/>
+        <div  class=" d-flex justify-content-center align-items-center">
+            <div class="col-lg-4 col-sm-6 col-10">
+                <p style="font-size: 25px;" class="text-dark" >Tên nhân viên: <%= staff.name%></p>
+                <p style="font-size: 25px;" class="text-dark" >Phòng ban: <%= staff.department%></p>
+            <form action="/staff/add-annualLeave" method="POST">     
+                <div class="mb-3">
+                    <h4 class="text-success" >Chọn ngày nghỉ phép</h4>
+                    <input type="date" class="form-control" name="dayOff" >
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Chọn số giờ nghỉ</h4>
+                    <input type="number" class="form-control" name="quantityDayoffs" >
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Lý do nghỉ</h4>
+                    <textarea type="text" class="form-control" name="reason" ></textarea>
+                </div>
+             
+                <div class="mb-3">
+                        <h4 class="text-success" style="font-size: 25h4x;"> Số ngày nghỉ còn lại: <%= staff.annualLeave.leffDayOff%></p>
+                </div>
+               
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+        </div>
+    </div>
+    </main>
+    <%- include('../includes/end.ejs') %>

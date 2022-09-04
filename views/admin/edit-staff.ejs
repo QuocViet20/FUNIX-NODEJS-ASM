@@ -1,0 +1,57 @@
+<%- include('../includes/head.ejs') %>
+ 
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main >
+       
+        <h1 class="mt-2 d-flex justify-content-center text-uppercase">thêm nhân viên mới</h1>
+        <hr/>
+        <div  class=" py-1 d-flex justify-content-center align-items-center">
+            <div class="col-lg-4 col-sm-6 col-10">
+            <form action="/admin/add-staff" method="POST">
+                <div class="mb-2 ">
+                    <h4 class="text-success" >Tên nhân viên</h4>
+                    <input type="text" class="form-control my-1" name="name" placeholder="Nguyễn Văn A">
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Ngày sinh</h4>
+                    <input type="date" name="doB" class="form-control"  >
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Ngày vào công ty</h4>
+                    <input type="date" class="form-control" name="startDate" >
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Bộ phận</h4>
+                    <select class="form-select" name="department">
+                        <option value="IT">IT</option>
+                        <option value="HR">HR</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Sale">Sale</option>
+                        <option value="Finance">Finance</option>
+                      </select>
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Hệ số lương</h4>
+                    <input type="text" class="form-control" name="salaryScale" placeholder="1.2">
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Số ngày nghỉ phép</h4>
+                    <input type="number" class="form-control" name="annualLeave" placeholder="7" >
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Ảnh thẻ</h4>
+                    <input type="text" class="form-control" name="imageUrl" placeholder="Hãy nhập đường dẫn link ảnh vào">
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Thêm mới</button>
+                </div>
+            </form>
+        </div>
+        </div>
+        
+    </main>
+    <%- include('../includes/end.ejs') %>

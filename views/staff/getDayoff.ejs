@@ -1,0 +1,44 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main>
+            <%
+            if(errMsg){%>
+                <div class="container">
+                    <h3><%= errMsg %></h3>
+                    <div class="mt-4 d-flex align-items-center">
+                        <p>Để trở lại đăng ký nghỉ phép hãy kích vào đây: </p>
+                        <a class="btn-danger px-2" style="font-size:30px;text-decoration:none;border: solid 1px;background-color: brown; " href="/staff/formDayoff" >Nghỉ phép</a>
+                        </div>
+                </div>
+                <%}else{%>
+                    <%  if(staff) { %> 
+                        <div class="container">
+        
+                            <h1 class="mt-4 d-flex justify-content-center text-uppercase">Thông tin đăng ký ngày nghỉ phép</h1>
+                            <hr/>
+                            <div class="mt-2 d-flex justify-content-center">
+                                <div>
+                                    <h4 class="text-dark">Tên nhân viên: <%= staff.name %></h4>
+                                    <h4 class="text-dark">Phòng ban: <%= staff.department %></h4>
+                                    <h4 class="text-dark">Ngày nghỉ phép: <%= dateOff %> </h4>
+                                    <h4 class="text-dark"> Số giờ đăng ký nghỉ: <%= annualLeave.dayOffs[annualLeave.dayOffs.length - 1].quantityDays %>h (<%= annualLeave.dayOffs[annualLeave.dayOffs.length - 1].quantityDays/8 %> ngày)</h4>
+                                    <h4 class="text-dark"> Số ngày nghỉ còn lại: <%= annualLeave.leffDayOff %> ngày</h4>
+                                    <h4 class="text-dark"> Lý do nghỉ: <%= annualLeave.dayOffs[annualLeave.dayOffs.length - 1].reason %></p>
+                                </div>
+                            </div>
+                               
+                        </div>
+                        <%} else {
+                            %> 
+                            <h1> Không tồn tại nhân viên</h1>
+                            <%
+                        }
+                    %>
+                   <%}
+            %>
+            
+        </main>
+        <%- include('../includes/end.ejs') %>

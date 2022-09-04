@@ -1,0 +1,130 @@
+
+<%- include('../includes/head.ejs') %>
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+     
+          <%  if(sessions.length>0) { %> 
+            <div class="container">
+                <h1 class="mt-2 d-flex justify-content-center text-uppercase">Quá trình làm việc</h1>
+                <hr/>
+                <div class="mt-2 pd-2 ">
+                    <div style="font-size:25px">Tên nhân viên: <%= staff.name %></div>
+                
+                    <div style="font-size:25px">Bộ phận: <%= staff.department%></div>
+                </div>
+                <hr/>
+                <h4 class="mt-2 d-flex justify-content-center text-uppercase" style="color:rgb(212, 83, 44) ;">Danh sách các lượt làm</h4>
+                <div class="mt-4 d-flex justify-content-center">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                              <th scope="col">Ngày</th>
+                              <th scope="col">Bắt đầu</th>
+                              <th scope="col">Kết thúc</th>
+                              <th scope="col">Nơi làm việc</th>
+                              <th scope="col">Tổng giờ làm</th>
+                              <!-- <th scope="col">Giờ làm thêm</th> -->
+                            </tr>
+                          </thead>
+                       
+                          <tbody>
+                            <%
+                            sessions.forEach(session=> { %>
+
+                              <tr>
+                                <td scope="row"><%= session.checkIn.getDate()
+                                    .toString()
+                                    .concat(" / " + (session.checkIn.getMonth()+1).toString()+"/"+session.checkIn.getFullYear()) %></td>
+                                <td> <%= session.checkIn.getHours().toString().concat(":").concat(session.checkIn.getMinutes()>=10?session.checkIn.getMinutes().toString():"0"+session.checkIn.getMinutes() ) %></td>
+                                <td> <% if(session.checkOut) {%> <%=session.checkOut.getHours().toString().concat(":").concat(session.checkOut.getMinutes()>=10?session.checkOut.getMinutes().toString():"0"+session.checkOut.getMinutes() )%><%} else{%>--<%}  %></td>
+                                <td><%= session.workPlace %></td>
+                                <td><%if(session.checkOut){%> <%=((session.checkOut-session.checkIn)/3600000).toFixed(1) %> <%} else{%><%}  %></td>
+                                <!-- <td><% if(((session.checkOut-session.checkIn)/3600000)>8) {%><%= (((session.checkOut-session.checkIn)/3600000)-8).toFixed(2) %> <%} else{%> 0.00<%}  %></td> -->
+                              </tr>
+                              <%}
+                              )
+                           %>
+                        
+                         
+                          </tbody>
+                      </table>
+                </div>   
+             
+                <h4 class="mt-4 d-flex justify-content-center text-uppercase" style="color:rgb(212, 83, 44) ;">Danh sách đăng ký nghỉ phép</h4>
+                <div class="mt-4 d-flex justify-content-center">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                              <th scope="col">Ngày</th>
+                              <th scope="col">số giờ</th>
+                              <th scope="col">lý do</th>
+                              
+                            </tr>
+                          </thead>
+                       
+                          <tbody>
+                            <%
+                            dayOffs.forEach(d=> { %>
+
+                              <tr>
+                               <td><%= d.dateOff.getDate()
+                                .toString()
+                                .concat(" / " + (d.dateOff.getMonth()+1).toString()+"/"+d.dateOff.getFullYear()) %></td>
+                                <td><%= d.quantityDays %></td>
+                                <td><%= d.reason %></td>
+                              </tr>
+                              <%}
+                              )
+                           %>
+                        
+                         
+                          </tbody>
+                      </table>
+                </div>  
+                
+                <h4 class="mt-2 d-flex justify-content-center text-uppercase" style="color:rgb(212, 83, 44) ;">Chi tiết lương</h4>
+                <div class="mt-4 d-flex justify-content-center">
+                    <form class="row g-3" action="/staff/salaryMonth" method="POST">
+                        <div class="col-auto">
+                          <h4  >Nhập tháng năm</h4>
+            
+                        </div>
+                        <div class="col-auto">
+                          
+                          <input type="text" class="form-control" name="month">
+                        </div>
+                        <div class="col-auto">
+                          <button type="submit" class="btn btn-primary mb-3">Chọn</button>
+                        </div>
+                      </form>
+                    
+                </div>
+                <%
+                if(salaryProper){%>
+                  <h5 class="mt-2 d-flex justify-content-center text-uppercase">Bảng lương tháng: <%= salaryProper.monthString%></h5>
+                  <div class="mt-4 ">
+                            <h6>Tổng giờ làm thêm trong tháng: <%= salaryProper.overtime %> (h)</h6>
+                            <h6>Tổng giờ làm thiếu trong tháng: <%= salaryProper.subtraction %> (h)</h6>
+                            <h6>Hệ số lướng tháng của bạn: <%= salaryProper.salaryScale%></h6>
+                            <h5 style="color: red ;">Lương tháng của bạn: <%= salaryProper.salary %> (đồng)</h5>
+                            <p> Công thức tính lương: <%= salaryProper.formula %></p>
+                    </div>
+                  
+                  <%}
+                %>  
+            </div>
+            <%} else {
+                %> <div class="container">
+
+                  <h1 class="mt-4"> Không có phiên làm việc !!!</h1>
+                </div>
+                <%
+            }
+        %>
+     
+        
+    </main>
+    <%- include('../includes/end.ejs') %>

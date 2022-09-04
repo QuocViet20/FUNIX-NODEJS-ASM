@@ -1,0 +1,114 @@
+<%- include('../includes/head.ejs') %>
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+        <div class="container">
+            <h2 class="mt-2 d-flex justify-content-center text-uppercase">Thông tin covid</h2>
+            <hr/>
+            <div class="mt-2 pd-2 ">
+                <div style="font-size:25px">Tên nhân viên: <%= staff.name %></div>
+            
+                <div style="font-size:25px">Bộ phận: <%= staff.department%></div>
+            </div>
+            <hr/>
+            <div>
+                <h3 class="mt-2 d-flex justify-content-center text-uppercase text-center" style="font: size 20px;color: rgb(211, 14, 14);">Đăng ký thông tin covid cá nhân</h3>
+               <form class="mt-2 " action="/staff/add-covidInfo" method="POST">
+                   <div class="mt-2 d-flex  ">
+                       <p style="font-size:20px ;" >Ngày đo nhiệt độ: <%= (new Date()).getDate().toString().concat("/"+(new Date().getMonth()+1)+"/"+(new Date()).getFullYear()) %></p>
+                       <p class="px-2" style="font-size:20px ;">giờ:  <%= (new Date()).getHours().toString().concat(":").concat((new Date()).getMinutes()>=10?(new Date()).getMinutes().toString():"0"+(new Date()).getMinutes() ) %></p>
+                   </div>
+                   <div class="mb-1 row g-2 align-items-center">
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <label  class="col-form-label" style="font-size:20px ;">Thân nhiệt: </label>
+                       </div>
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <input class="form-control"  type="text" name="temperature"  >
+                       </div>
+                   </div>
+                   <div class="mb-1 row g-2 align-items-center">
+                       <div class="col-lg-2 col-sm-3 col-5" >
+                       <label   style="font-size:20px ;">Vaccine mũi 1:</label>
+                       </div>
+                       <div class="col-lg-2 col-sm-3 col-5">
+                           <select class="form-select" name="vaccinnated1" >
+                               <option value="no">Chưa tiêm</option>
+                               <option value="yes">Đã tiêm</option>  
+                             </select>
+                       </div>
+                   </div>
+                   <div class="mb-1 row g-2 align-items-center">
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <label  class="col-form-label" style="font-size:20px ;">Loại:</label>
+                       </div>
+                       <div class="col-lg-2 col-sm-3 col-5" >
+                           <select class="form-select" name="vaccineType1" >
+                               <option value="Loại 1">Loại 1</option>
+                               <option value="Loại 2">Loại 2</option>  
+                               <option value="Loại 3">Loại 3</option>
+                               <option value="Loại 4">Loại 4</option> 
+                             </select>
+                       </div>
+                   </div>
+                   <div class="mb-1 row g-2 align-items-center">
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <label  class="col-form-label" style="font-size:20px ;">Ngày tiêm:</label>
+                       </div>
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <input class="form-control" type="date" name="vaccinnatedDate1"  >
+                       </div>
+                   </div>
+                   <div class="mb-1 row g-2 align-items-center">
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <label  class="col-form-label" style="font-size:20px ;">Vaccine mũi 2:</label>
+                       </div>
+                       <div class="col-lg-2 col-sm-3 col-5">
+                           <select class="form-select" name="vaccinnated2" >
+                               <option value="no">Chưa tiêm</option>
+                               <option value="yes">Đã tiêm</option>  
+                             </select>
+                       </div>
+                   </div>
+                   <div class="mb-1 row g-2 align-items-center">
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <label  class="col-form-label" style="font-size:20px ;">Loại:</label>
+                       </div>
+                       <div class="col-lg-2 col-sm-3 col-5" >
+                           <select class="form-select" name="vaccineType2" >
+                               <option value="Loại 1">Loại 1</option>
+                               <option value="Loại 2">Loại 2</option>  
+                               <option value="Loại 3">Loại 3</option>
+                               <option value="Loại 4">Loại 4</option> 
+                             </select>
+                       </div>
+                   </div>
+                   <div class="mb-1 row g-2 align-items-center">
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <label  class="col-form-label" style="font-size:20px ;">Ngày tiêm:</label>
+                       </div>
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <input class="form-control" type="date" name="vaccinnatedDate2"  >
+                       </div>
+                   </div>
+                   <div class="mb-1 row g-2 align-items-center">
+                       <div class="col-lg-2 col-sm-3 col-5">
+                       <label  class="col-form-label" style="font-size:20px ;">Test Covid:</label>
+                       </div>
+                       <div class="col-lg-2 col-sm-3 col-5" >
+                           <select class="form-select" name="covidStatus" >
+                               <option value="false">Âm tính</option>
+                               <option value="true">Dương tính</option>  
+                             </select>
+                       </div>
+                   </div>
+                   <div class="my-3">
+                    <button type="submit" class="btn btn-primary" style="background-color:rgb(32, 70, 187) ;">Đăng ký</button>
+                    </div>
+               </form>
+            </div>
+        </div>
+    </main>
+
+<%- include('../includes/end.ejs') %>

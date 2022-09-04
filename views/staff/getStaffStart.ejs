@@ -1,0 +1,38 @@
+<%- include('../includes/head.ejs') %>
+ 
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main >
+       <div class="container">
+        <h1 class="mt-2 d-flex justify-content-center text-uppercase">Bắt đầu điểm danh</h1>
+        <hr/>
+        <div  class=" py-1 d-flex justify-content-center align-items-center">
+            <div class="col-lg-4 col-sm-6 col-10">
+                <div class="d-flex">
+
+                    <h4 class="text-dark" >Tên nhân viên:</h4><h4 style="color:rgb(231, 53, 13) ; margin-left: 5px;"> <%= staff.name%></h4>
+                </div>
+            <form action="/staff/add-session" method="POST">
+                
+                <div class="mb-3">
+                    <h4 class="text-success" >Chọn nơi làm việc</h4>
+                    <select class="form-select" name="workPlace">
+                        <option value="Công Ty">Công Ty</option>
+                        <option value="Ở Nhà">Ở Nhà</option>
+                        <option value="Công Ty Khách Hàng">Công Ty Khách Hàng</option>
+                       
+                      </select>
+                </div>
+                
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+        </div>
+    </div>
+    </main>
+    <%- include('../includes/end.ejs') %>

@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-info">
+    <div class="container">
+      <a class="navbar-brand text-uppercase" href="/staff/information" >Home</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item mx-2" >
+            <a class="nav-link  <%= path==='/staff' ? 'text-warning' : 'text-dark' %> text-uppercase"  href="/staff" >TimeKeeping</a>
+          </li>
+          <li class="nav-item mx-2   ">
+            <a class="nav-link <%= path==='/staff/information' ? 'text-warning' : 'text-dark' %> text-uppercase"   href="/staff/information">information</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link <%= path==='/staff/infoSessions' ? 'text-warning' : 'text-dark' %> text-uppercase"   href="/staff/infoSessions">reference</a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link <%= path==='/staff/form-covidInfo' ? 'text-warning' : 'text-dark' %>  text-uppercase"  href="/staff/form-covidInfo" >covid detail</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>

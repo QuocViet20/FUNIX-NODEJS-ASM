@@ -1,0 +1,95 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main>
+            <%  if(staff) { %> 
+                <div class="container">
+                    <h1 class="mt-2 d-flex justify-content-center text-uppercase">Thông tin cá nhân</h1>
+                    <hr/>
+                    <div class="mt-2 d-flex justify-content-center">
+
+                        <div class=" mb-3" style="max-width: 540px;min-height: 540px;">
+                            <div class="row g-0">
+                              <div class="col-md-4">
+                                <img src="<%= staff.imageUrl %>" class="img-fluid rounded" alt="...">
+                                <div class="mt-1 text-center">
+                                    <button type="button" class="btn btn-success" style="background-color:rgb(9, 33, 83) ;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                        Thay ảnh đại diện
+                                      </button>
+                                </div>
+                              </div>
+                              <div class="col-md-8 px-4" >
+                                <div class="card-body">
+                                  <div class=" d-flex">
+
+                                    <h6 style="font-size: 20px;" >Mã Id:</h6> <h6 style="font-size: 20px;color: rgb(35, 208, 70); margin-left: 5px;"> <%= staff._id.toString().slice(0,5) %></h6 >
+                                  </div>
+                                  <div class=" d-flex">
+
+                                    <h6 style="font-size: 20px;padding: 10px auto;">Tên:</h6> <h6 style="font-size: 20px;color: rgb(35, 208, 70); margin-left: 5px;"> <%= staff.name %></h6 >
+                                  </div>
+                                  <div class=" d-flex">
+
+                                    <h6 style="font-size: 20px;padding: 10px auto;">Ngày sinh:</h6><h6 style="font-size: 20px;color: rgb(35, 208, 70); margin-left: 5px;"> <%= staff.doB.getDate()
+                                      .toString()
+                                      .concat(
+                                        "/" + (staff.doB.getMonth() + 1).toString() + "/" + staff.doB.getFullYear()) %></h6>
+                                  </div>
+                                  <div class=" d-flex">
+
+                                    <h6 style="font-size: 20px;padding: 10px auto;">Ngày vào công ty:</h6><h6 style="font-size: 20px;color: rgb(35, 208, 70); margin-left: 5px;"> <%= staff.startDate.getDate()
+                                           .toString()
+                                           .concat(
+                                             "/" + (staff.startDate.getMonth() + 1).toString() + "/" + staff.startDate.getFullYear()) %></h6>
+                                  </div>
+                                  <div class=" d-flex">
+
+                                    <h6 style="font-size: 20px;padding: 5px auto;">Hệ số lương:</h6><h6 style="font-size: 20px;color: rgb(35, 208, 70); margin-left: 5px;"> <%= staff.salaryScale%></h6>
+                                  </div>
+                                  <div class=" d-flex">
+
+                                    <h6 style="font-size: 20px;padding: 5px auto;">Bộ phận làm việc:</h6><h6 style="font-size: 20px;color: rgb(35, 208, 70); margin-left: 5px;"> <%= staff.department%></h6>
+                                  </div>
+                                  <div class=" d-flex">
+
+                                    <h6 style="font-size: 20px;padding: 5px auto;">Số ngày nghỉ phép:</h6><h6 style="font-size: 20px;color: rgb(35, 208, 70); margin-left: 5px;"> <%= staff.annualLeave.leffDayOff %> ngày</h6>
+                                  </div>
+                                </div>
+                                
+                              </div>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+                <%} else {
+                    %> 
+                    <h1> Không tồn tại nhân viên</h1>
+                    <%
+                }
+            %>
+            <!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="staticBackdropLabel">Thay ảnh đại diện</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form class="modal-body" action="/staff/staff-updateImage" method="POST">
+            <div class="mb-3">
+                <h4 class="text-success" >Nhập đường dẫn link ảnh đại diện mới</h4>
+                <input type="text" class="form-control" name="imageUrl" value="<%= staff.imageUrl %>">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            <button type="submit" class="btn btn-primary">xác nhận</button>
+        </div>
+        </form>
+        
+      </div>
+    </div>
+  </div>
+        </main>
+        <%- include('../includes/end.ejs') %>
