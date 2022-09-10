@@ -383,7 +383,7 @@ exports.getFormCovidInfo = (req, res, next) => {
         vaccine1: vaccine1,
         vaccine2: vaccine2,
         staff: req.staff,
-        pageTitle: "staff-Sessions",
+        pageTitle: "Covid-Detail",
         path: "/staff/form-covidInfo",
         errMsg: null,
       });
@@ -401,7 +401,9 @@ exports.postAddCovidInfo = (req, res, next) => {
   const vaccineType2 = req.body.vaccineType2;
   const vaccinnatedDate2 = req.body.vaccinnatedDate2;
   const covidStatus = req.body.covidStatus;
-  console.log(vaccinnated1, vaccineType1, vaccinnatedDate1);
+  console.log(vaccinnated2, vaccineType2, vaccinnatedDate2);
+  console.log(vaccinnatedDate1);
+
   let vaccine = [];
   if (vaccinnated1 === "yes") {
     vaccine.push({

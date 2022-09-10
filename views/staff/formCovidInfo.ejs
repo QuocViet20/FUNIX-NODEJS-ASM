@@ -138,7 +138,7 @@
                                 <label  class="col-form-label" style="font-size:20px ;">Loại:</label>
                                 </div>
                                 <div class="col-lg-2 col-sm-3 col-5" >
-                                    <select class="form-select" name="vaccineType1"  >
+                                    <select class="form-control" name="vaccineType1"  >
                                         <option value="<%= vaccine1.vaccineType %>"><%= vaccine1.vaccineType %></option>
                                        
                                       </select>
@@ -148,9 +148,13 @@
                                 <div class="col-lg-2 col-sm-3 col-5">
                                 <label  class="col-form-label" style="font-size:20px ;">Ngày tiêm:</label>
                                 </div>
-                                <div class="col-lg-2 col-sm-3 col-5">
-                                <input class="form-control"  name="vaccinnatedDate1" value="<%=vaccine1.vaccinnatedDate.getDate().toString().concat('/'+vaccine1.vaccinnatedDate.getMonth()+'/'+vaccine1.vaccinnatedDate.getFullYear()) %>" >
+                                <div class="col-lg-2 col-sm-3 col-5" >
+                                    <select class="form-control" name="vaccinnatedDate1"  >
+                                        <option value="<%= vaccine1.vaccinnatedDate %>"><%=vaccine1.vaccinnatedDate.getDate().toString().concat('/'+(vaccine1.vaccinnatedDate.getMonth()+1)+'/'+vaccine1.vaccinnatedDate.getFullYear()) %></option>
+                                       
+                                    </select>
                                 </div>
+                              
                             </div>
                             <%}  else{%>
                                 <div class="mb-1 row g-2 align-items-center">
@@ -214,8 +218,11 @@
                                 <div class="col-lg-2 col-sm-3 col-5">
                                 <label  class="col-form-label" style="font-size:20px ;">Ngày tiêm:</label>
                                 </div>
-                                <div class="col-lg-2 col-sm-3 col-5">
-                                <input class="form-control"  name="vaccinnatedDate2" value="<%=vaccine2.vaccinnatedDate.getDate().toString().concat('/'+vaccine2.vaccinnatedDate.getMonth()+'/'+vaccine2.vaccinnatedDate.getFullYear()) %>" disabled="true">
+                                <div class="col-lg-2 col-sm-3 col-5" >
+                                    <select class="form-control" name="vaccinnatedDate2"  >
+                                        <option value="<%= vaccine2.vaccinnatedDate %>"><%=vaccine2.vaccinnatedDate.getDate().toString().concat('/'+(vaccine2.vaccinnatedDate.getMonth()+1)+'/'+vaccine2.vaccinnatedDate.getFullYear()) %></option>
+                                       
+                                    </select>
                                 </div>
                             </div>
                             <%}  else{%>
@@ -258,24 +265,11 @@
                             <div class="col-lg-2 col-sm-3 col-5">
                             <label  class="col-form-label" style="font-size:20px ;">Test Covid:</label>
                             </div>
-                            <div class="col-lg-2 col-sm-3 col-5" >
-                                <% if(covidInfo.covidStatus) {%>
-                                   
+                            <div class="col-lg-2 col-sm-3 col-5" >             
                                     <select class="form-select" name="covidStatus" >
-                                        <option value="<%= covidInfo.covidStatus %>"> <%= covidInfo.covidStatus?'Dương tính':"Âm tính" %> </option>
-                                        
-                                    </select>
-                                    <%}
-                                    else {
-                                        %>
-                                       <select class="form-select" name="covidStatus" >
                                         <option value="false">Âm tính</option>
                                         <option value="true">Dương tính</option>  
-                                    </select> 
-                                        <%
-                                    }
-                                %>
-                                
+                                    </select>    
                             </div>
                         </div>
                         <div class="my-3">
