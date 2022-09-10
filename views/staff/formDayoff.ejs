@@ -33,7 +33,7 @@
                 </div>
              
                 <div class="mb-3">
-                        <h4 class="text-success" style="font-size: 25h4x;"> Số ngày nghỉ còn lại: <%= staff.annualLeave.leffDayOff%> </p>
+                        <h4 class="text-success" style="font-size: 25px;"> Số ngày nghỉ còn lại: <%= Math.floor(staff.annualLeave.leffDayOff) %> ngày <%= (staff.annualLeave.leffDayOff*8) -Math.floor(staff.annualLeave.leffDayOff)*8 %> giờ  </p>
                 </div>
                
                 <div class="mb-3">

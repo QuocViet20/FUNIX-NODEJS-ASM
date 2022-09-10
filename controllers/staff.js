@@ -375,18 +375,27 @@ exports.postSalaryMonth = (req, res, next) => {
 exports.getFormCovidInfo = (req, res, next) => {
   CovidInfo.find({ staffId: req.staff._id })
     .then((covidInfos) => {
-      const vaccine1 = covidInfos[covidInfos.length - 1].vaccinnated[0];
-      const vaccine2 = covidInfos[covidInfos.length - 1].vaccinnated[1];
-      console.log(covidInfos[covidInfos.length - 1]);
-      res.render("staff/formCovidInfo", {
-        covidInfo: covidInfos[covidInfos.length - 1],
-        vaccine1: vaccine1,
-        vaccine2: vaccine2,
-        staff: req.staff,
-        pageTitle: "Covid-Detail",
-        path: "/staff/form-covidInfo",
-        errMsg: null,
-      });
+      if (covidInfos.length > 0) {
+        const vaccine1 = covidInfos[covidInfos.length - 1].vaccinnated[0];
+        const vaccine2 = covidInfos[covidInfos.length - 1].vaccinnated[1];
+        return res.render("staff/formCovidInfo", {
+          covidInfo: covidInfos[covidInfos.length - 1],
+          vaccine1: vaccine1,
+          vaccine2: vaccine2,
+          staff: req.staff,
+          pageTitle: "Covid-Detail",
+          path: "/staff/form-covidInfo",
+          errMsg: null,
+        });
+      } else {
+        return res.render("staff/formCovidInfo", {
+          covidInfo: null,
+          staff: req.staff,
+          pageTitle: "Covid-Detail",
+          path: "/staff/form-covidInfo",
+          errMsg: null,
+        });
+      }
     })
     .catch((err) => console.log(err));
 };
@@ -450,7 +459,7 @@ exports.getCovidInfo = (req, res, next) => {
         vaccine1: covidInfos[covidInfos.length - 1].vaccine,
         staff: req.staff,
         pageTitle: "staff-covidInfo",
-        path: "/staff/covidInfo",
+        path: "/staff/form-covidInfo",
         errMsg: null,
       });
     })
