@@ -2,11 +2,18 @@ const CovidInfo = require("../models/covidInfo");
 const Session = require("../models/session");
 
 exports.getStaff = (req, res, next) => {
-  res.render("staff/getStaff", {
-    staff: req.staff,
-    pageTitle: "staff",
-    path: "/staff",
-  });
+  Session.find({
+    staffId: req.staff._id,
+  })
+    .then((sessions) => {
+      res.render("staff/getStaff", {
+        endSession: sessions[sessions.length - 1],
+        staff: req.staff,
+        pageTitle: "staff",
+        path: "/staff",
+      });
+    })
+    .catch((err) => console.log(err));
 };
 exports.getStaffStart = (req, res, next) => {
   res.render("staff/getStaffStart", {
@@ -26,7 +33,6 @@ exports.postAddSession = (req, res, next) => {
     workingStatus: true,
     workingAll: true,
     checkIn: new Date(),
-    checkOut: null,
     staffId: req.staff._id,
   });
   Session.find()
@@ -45,7 +51,6 @@ exports.postAddSession = (req, res, next) => {
         session
           .save()
           .then((result) => {
-            console.log(result);
             return res.redirect("/staff/startCheckIn");
           })
           .catch((err) => console.log(err));
@@ -57,7 +62,6 @@ exports.postAddSession = (req, res, next) => {
 exports.getStaffCheckIn = (req, res, next) => {
   Session.find()
     .then((sessions) => {
-      console.log(sessions);
       res.render("staff/sessionCheckIn", {
         session: sessions[sessions.length - 1],
         getTime: sessions[sessions.length - 1].checkIn
@@ -123,7 +127,7 @@ exports.getSessions = (req, res, next) => {
         const workTime = s.checkOut - s.checkIn;
         sum += workTime;
       });
-      console.log(sum);
+
       const tongTimes = (sum / 3600000).toFixed(1);
       res.render("staff/getSessions", {
         sessions: sessionsTd,
@@ -148,6 +152,9 @@ exports.getFormDayoff = (req, res, next) => {
 
 exports.postAddAnnualLeav = (req, res, next) => {
   const dateOff = req.body.dayOff;
+  console.log(typeof dateOff);
+  let dateOffArr = dateOff.split(",");
+  console.log(dateOffArr.length);
   const quantityDays = req.body.quantityDayoffs;
   const reason = req.body.reason;
   const staffAnnualLeave = req.staff.annualLeave;
@@ -174,10 +181,8 @@ exports.postAddAnnualLeav = (req, res, next) => {
       path: "/staff",
     });
   } else {
-    staffAnnualLeave.leffDayOff = (
-      staffAnnualLeave.leffDayOff -
-      quantityDays / 8
-    ).toFixed(1);
+    staffAnnualLeave.leffDayOff =
+      staffAnnualLeave.leffDayOff - (quantityDays * dateOffArr.length) / 8;
     const dayOff = {
       dateOff: dateOff,
       quantityDays: quantityDays,
@@ -198,18 +203,18 @@ exports.postAddAnnualLeav = (req, res, next) => {
 
 exports.getDayoff = (req, res, next) => {
   const annualLeave = req.staff.annualLeave;
-  const dateTmp = annualLeave.dayOffs[annualLeave.dayOffs.length - 1].dateOff;
-  const dateOff = dateTmp
-    .getDate()
-    .toString()
-    .concat(
-      "/" + (dateTmp.getMonth() + 1).toString() + "/" + dateTmp.getFullYear()
-    );
-  console.log(dateOff);
+  // const dateTmp = annualLeave.dayOffs[annualLeave.dayOffs.length - 1].dateOff;
+  // const dateOff = dateTmp
+  //   .getDate()
+  //   .toString()
+  //   .concat(
+  //     "/" + (dateTmp.getMonth() + 1).toString() + "/" + dateTmp.getFullYear()
+  //   );
+  // console.log(dateOff);
   res.render("staff/getDayoff", {
     staff: req.staff,
     annualLeave: annualLeave,
-    dateOff: dateOff,
+    dateOff: annualLeave.dayOffs[annualLeave.dayOffs.length - 1].dateOff,
     errMsg: null,
     pageTitle: "Dayoff",
     path: "/staff",
@@ -248,7 +253,7 @@ exports.getInfoSessions = (req, res, next) => {
       const sessionsSort = sessions.sort((a, b) =>
         a.checkIn > b.checkIn ? 1 : a.checkIn < b.checkIn ? -1 : 1
       );
-      console.log(dayOffs);
+
       res.render("staff/getInfoSessions", {
         sessions: sessionsSort,
         dayOffs: dayOffsSort,
@@ -322,7 +327,7 @@ exports.postSalaryMonth = (req, res, next) => {
       // console.log(totalWorktime);
       // mang cac ngay da lam
       const workedArr = totalOvertimeArr.filter((t) => t != 0);
-      console.log(workedArr);
+
       let overtimeMonth = 0;
       let subHours = 0;
       const workedArrMap = workedArr.map((t) => {
@@ -334,7 +339,6 @@ exports.postSalaryMonth = (req, res, next) => {
       });
       overtimeMonth = overtimeMonth.toFixed(1);
       subHours = subHours.toFixed(1);
-      console.log(overtimeMonth, subHours);
 
       // let totalOvertime = 0;
       // for (let i = 0; i < totalOvertimeArr.length - 1; i++) {
@@ -369,12 +373,22 @@ exports.postSalaryMonth = (req, res, next) => {
 
 // form covid info
 exports.getFormCovidInfo = (req, res, next) => {
-  res.render("staff/formCovidInfo", {
-    staff: req.staff,
-    pageTitle: "staff-Sessions",
-    path: "/staff/form-covidInfo",
-    errMsg: null,
-  });
+  CovidInfo.find({ staffId: req.staff._id })
+    .then((covidInfos) => {
+      const vaccine1 = covidInfos[covidInfos.length - 1].vaccinnated[0];
+      const vaccine2 = covidInfos[covidInfos.length - 1].vaccinnated[1];
+      console.log(covidInfos[covidInfos.length - 1]);
+      res.render("staff/formCovidInfo", {
+        covidInfo: covidInfos[covidInfos.length - 1],
+        vaccine1: vaccine1,
+        vaccine2: vaccine2,
+        staff: req.staff,
+        pageTitle: "staff-Sessions",
+        path: "/staff/form-covidInfo",
+        errMsg: null,
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 //post covid info
@@ -387,6 +401,7 @@ exports.postAddCovidInfo = (req, res, next) => {
   const vaccineType2 = req.body.vaccineType2;
   const vaccinnatedDate2 = req.body.vaccinnatedDate2;
   const covidStatus = req.body.covidStatus;
+  console.log(vaccinnated1, vaccineType1, vaccinnatedDate1);
   let vaccine = [];
   if (vaccinnated1 === "yes") {
     vaccine.push({
@@ -428,8 +443,6 @@ exports.postAddCovidInfo = (req, res, next) => {
 exports.getCovidInfo = (req, res, next) => {
   CovidInfo.find()
     .then((covidInfos) => {
-      console.log(covidInfos);
-      console.log(covidInfos[covidInfos.length - 1].vaccine);
       res.render("staff/getCovidInfo", {
         covidInfo: covidInfos[covidInfos.length - 1],
         vaccine1: covidInfos[covidInfos.length - 1].vaccine,

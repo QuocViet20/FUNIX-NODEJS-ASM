@@ -26,7 +26,7 @@ const staffSchema = new Schema({
     leffDayOff: { type: Number, required: true },
     dayOffs: [
       {
-        dateOff: { type: Date, required: true },
+        dateOff: { type: String, required: true },
         reason: { type: String, required: true },
         quantityDays: { type: Number, required: true },
       },

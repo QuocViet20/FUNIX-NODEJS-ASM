@@ -1,5 +1,8 @@
 <%- include('../includes/head.ejs') %>
- 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/dubrox/Multiple-Dates-Picker-for-jQuery-UI@master/jquery-ui.multidatespicker.js"></script>
+<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
 </head>
 
 <body>
@@ -17,7 +20,8 @@
             <form action="/staff/add-annualLeave" method="POST">     
                 <div class="mb-3">
                     <h4 class="text-success" >Chọn ngày nghỉ phép</h4>
-                    <input type="date" class="form-control" name="dayOff" >
+                  
+                    <input type="text" id="datePick" class="form-control" name="dayOff"/>
                 </div>
                 <div class="mb-3">
                     <h4 class="text-success" >Chọn số giờ nghỉ</h4>
@@ -29,15 +33,22 @@
                 </div>
              
                 <div class="mb-3">
-                        <h4 class="text-success" style="font-size: 25h4x;"> Số ngày nghỉ còn lại: <%= staff.annualLeave.leffDayOff%></p>
+                        <h4 class="text-success" style="font-size: 25h4x;"> Số ngày nghỉ còn lại: <%= staff.annualLeave.leffDayOff%> </p>
                 </div>
                
                 <div class="mb-3">
                     <button type="submit" class="btn btn-primary">Xác nhận</button>
                 </div>
+                
             </form>
         </div>
         </div>
     </div>
     </main>
+    <script>
+        $(document).ready(function () {
+          $('#datePick').multiDatesPicker();
+        });
+      </script>
     <%- include('../includes/end.ejs') %>
+ 

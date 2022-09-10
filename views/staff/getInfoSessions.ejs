@@ -70,9 +70,7 @@
                             dayOffs.forEach(d=> { %>
 
                               <tr>
-                               <td><%= d.dateOff.getDate()
-                                .toString()
-                                .concat(" / " + (d.dateOff.getMonth()+1).toString()+"/"+d.dateOff.getFullYear()) %></td>
+                               <td><%= d.dateOff %></td>
                                 <td><%= d.quantityDays %></td>
                                 <td><%= d.reason %></td>
                               </tr>

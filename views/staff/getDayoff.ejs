@@ -24,8 +24,8 @@
                                     <h4 class="text-dark">Tên nhân viên: <%= staff.name %></h4>
                                     <h4 class="text-dark">Phòng ban: <%= staff.department %></h4>
                                     <h4 class="text-dark">Ngày nghỉ phép: <%= dateOff %> </h4>
-                                    <h4 class="text-dark"> Số giờ đăng ký nghỉ: <%= annualLeave.dayOffs[annualLeave.dayOffs.length - 1].quantityDays %>h (<%= annualLeave.dayOffs[annualLeave.dayOffs.length - 1].quantityDays/8 %> ngày)</h4>
-                                    <h4 class="text-dark"> Số ngày nghỉ còn lại: <%= annualLeave.leffDayOff %> ngày</h4>
+                                    <h4 class="text-dark"> Số giờ đăng ký nghỉ: <%= annualLeave.dayOffs[annualLeave.dayOffs.length - 1].quantityDays %> h </h4>
+                                    <h4 class="text-dark"> Số ngày nghỉ còn lại: <%= Math.floor(annualLeave.leffDayOff) %> ngày <%= (annualLeave.leffDayOff*8) -Math.floor(annualLeave.leffDayOff)*8 %> giờ </h4>
                                     <h4 class="text-dark"> Lý do nghỉ: <%= annualLeave.dayOffs[annualLeave.dayOffs.length - 1].reason %></p>
                                 </div>
                             </div>

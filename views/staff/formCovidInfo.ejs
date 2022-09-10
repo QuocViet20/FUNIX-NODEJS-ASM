@@ -15,7 +15,8 @@
             <hr/>
             <div>
                 <h3 class="mt-2 d-flex justify-content-center text-uppercase text-center" style="font: size 20px;color: rgb(211, 14, 14);">Đăng ký thông tin covid cá nhân</h3>
-               <form class="mt-2 " action="/staff/add-covidInfo" method="POST">
+               <% if(!covidInfo) {%>
+                <form class="mt-2 " action="/staff/add-covidInfo" method="POST">
                    <div class="mt-2 d-flex  ">
                        <p style="font-size:20px ;" >Ngày đo nhiệt độ: <%= (new Date()).getDate().toString().concat("/"+(new Date().getMonth()+1)+"/"+(new Date()).getFullYear()) %></p>
                        <p class="px-2" style="font-size:20px ;">giờ:  <%= (new Date()).getHours().toString().concat(":").concat((new Date()).getMinutes()>=10?(new Date()).getMinutes().toString():"0"+(new Date()).getMinutes() ) %></p>
@@ -33,8 +34,8 @@
                        <label   style="font-size:20px ;">Vaccine mũi 1:</label>
                        </div>
                        <div class="col-lg-2 col-sm-3 col-5">
-                           <select class="form-select" name="vaccinnated1" >
-                               <option value="no">Chưa tiêm</option>
+                           <select class="form-select" name="vaccinnated1"  disabled="true">
+                               <option value="no" disabled="true">Chưa tiêm</option>
                                <option value="yes">Đã tiêm</option>  
                              </select>
                        </div>
@@ -107,6 +108,182 @@
                     <button type="submit" class="btn btn-primary" style="background-color:rgb(32, 70, 187) ;">Đăng ký</button>
                     </div>
                </form>
+                <%} else{%> 
+                    <form class="mt-2 " action="/staff/add-covidInfo" method="POST">
+                        <div class="mt-2 d-flex  ">
+                            <p style="font-size:20px ;" >Ngày đo nhiệt độ: <%= (new Date()).getDate().toString().concat("/"+(new Date().getMonth()+1)+"/"+(new Date()).getFullYear()) %></p>
+                            <p class="px-2" style="font-size:20px ;">giờ:  <%= (new Date()).getHours().toString().concat(":").concat((new Date()).getMinutes()>=10?(new Date()).getMinutes().toString():"0"+(new Date()).getMinutes() ) %></p>
+                        </div>
+                        <div class="mb-1 row g-2 align-items-center">
+                            <div class="col-lg-2 col-sm-3 col-5">
+                            <label  class="col-form-label" style="font-size:20px ;">Thân nhiệt: </label>
+                            </div>
+                            <div class="col-lg-2 col-sm-3 col-5">
+                            <input class="form-control"  type="text" name="temperature"  >
+                            </div>
+                        </div>
+                        <% if(vaccine1){%>
+                            <div class="mb-1 row g-2 align-items-center">
+                                <div class="col-lg-2 col-sm-3 col-5" >
+                                <label   style="font-size:20px ;">Vaccine mũi 1:</label>
+                                </div>
+                                <div class="col-lg-2 col-sm-3 col-5">
+                                    <select class="form-select" name="vaccinnated1"  >
+                                        <option value="<%= vaccine1.number ?'yes':'no'%>">Đã tiêm</option>  
+                                      </select>
+                                </div>
+                            </div>
+                            <div class="mb-1 row g-2 align-items-center">
+                                <div class="col-lg-2 col-sm-3 col-5">
+                                <label  class="col-form-label" style="font-size:20px ;">Loại:</label>
+                                </div>
+                                <div class="col-lg-2 col-sm-3 col-5" >
+                                    <select class="form-select" name="vaccineType1"  >
+                                        <option value="<%= vaccine1.vaccineType %>"><%= vaccine1.vaccineType %></option>
+                                       
+                                      </select>
+                                </div>
+                            </div>
+                            <div class="mb-1 row g-2 align-items-center">
+                                <div class="col-lg-2 col-sm-3 col-5">
+                                <label  class="col-form-label" style="font-size:20px ;">Ngày tiêm:</label>
+                                </div>
+                                <div class="col-lg-2 col-sm-3 col-5">
+                                <input class="form-control"  name="vaccinnatedDate1" value="<%=vaccine1.vaccinnatedDate.getDate().toString().concat('/'+vaccine1.vaccinnatedDate.getMonth()+'/'+vaccine1.vaccinnatedDate.getFullYear()) %>" >
+                                </div>
+                            </div>
+                            <%}  else{%>
+                                <div class="mb-1 row g-2 align-items-center">
+                                    <div class="col-lg-2 col-sm-3 col-5" >
+                                    <label   style="font-size:20px ;">Vaccine mũi 1:</label>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-3 col-5">
+                                        <select class="form-select" name="vaccinnated1"   >
+                                            <option value="no" >Chưa tiêm</option>
+                                            <option value="yes">Đã tiêm</option>  
+                                          </select>
+                                    </div>
+                                </div>
+                                <div class="mb-1 row g-2 align-items-center">
+                                    <div class="col-lg-2 col-sm-3 col-5">
+                                    <label  class="col-form-label" style="font-size:20px ;">Loại:</label>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-3 col-5" >
+                                        <select class="form-select" name="vaccineType1" >
+                                            <option value="Loại 1">Loại 1</option>
+                                            <option value="Loại 2">Loại 2</option>  
+                                            <option value="Loại 3">Loại 3</option>
+                                            <option value="Loại 4">Loại 4</option> 
+                                          </select>
+                                    </div>
+                                </div>
+                                <div class="mb-1 row g-2 align-items-center">
+                                    <div class="col-lg-2 col-sm-3 col-5">
+                                    <label  class="col-form-label" style="font-size:20px ;">Ngày tiêm:</label>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-3 col-5">
+                                    <input class="form-control" type="date" name="vaccinnatedDate1"  >
+                                    </div>
+                                </div>
+                                <%}
+                          
+                         %>
+                         <% if(vaccine2){%>
+                            <div class="mb-1 row g-2 align-items-center">
+                                <div class="col-lg-2 col-sm-3 col-5" >
+                                <label   style="font-size:20px ;">Vaccine mũi 2:</label>
+                                </div>
+                                <div class="col-lg-2 col-sm-3 col-5">
+                                    <select class="form-select" name="vaccinnated2" >
+                                        <option value="yes">Đã tiêm</option>  
+                                      </select>
+                                </div>
+                            </div>
+                            <div class="mb-1 row g-2 align-items-center">
+                                <div class="col-lg-2 col-sm-3 col-5">
+                                <label  class="col-form-label" style="font-size:20px ;">Loại:</label>
+                                </div>
+                                <div class="col-lg-2 col-sm-3 col-5" >
+                                    <select class="form-select" name="vaccineType2" >
+                                        <option value="<%= vaccine1.vaccineType %>"><%= vaccine1.vaccineType %></option>
+                                       
+                                      </select>
+                                </div>
+                            </div>
+                            <div class="mb-1 row g-2 align-items-center">
+                                <div class="col-lg-2 col-sm-3 col-5">
+                                <label  class="col-form-label" style="font-size:20px ;">Ngày tiêm:</label>
+                                </div>
+                                <div class="col-lg-2 col-sm-3 col-5">
+                                <input class="form-control"  name="vaccinnatedDate2" value="<%=vaccine2.vaccinnatedDate.getDate().toString().concat('/'+vaccine2.vaccinnatedDate.getMonth()+'/'+vaccine2.vaccinnatedDate.getFullYear()) %>" disabled="true">
+                                </div>
+                            </div>
+                            <%}  else{%>
+                                <div class="mb-1 row g-2 align-items-center">
+                                    <div class="col-lg-2 col-sm-3 col-5" >
+                                    <label   style="font-size:20px ;">Vaccine mũi 2:</label>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-3 col-5">
+                                        <select class="form-select" name="vaccinnated2"  >
+                                            <option value="no" >Chưa tiêm</option>
+                                            <option value="yes">Đã tiêm</option>  
+                                          </select>
+                                    </div>
+                                </div>
+                                <div class="mb-1 row g-2 align-items-center">
+                                    <div class="col-lg-2 col-sm-3 col-5">
+                                    <label  class="col-form-label" style="font-size:20px ;">Loại:</label>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-3 col-5" >
+                                        <select class="form-select" name="vaccineType2" >
+                                            <option value="Loại 1">Loại 1</option>
+                                            <option value="Loại 2">Loại 2</option>  
+                                            <option value="Loại 3">Loại 3</option>
+                                            <option value="Loại 4">Loại 4</option> 
+                                          </select>
+                                    </div>
+                                </div>
+                                <div class="mb-1 row g-2 align-items-center">
+                                    <div class="col-lg-2 col-sm-3 col-5">
+                                    <label  class="col-form-label" style="font-size:20px ;">Ngày tiêm:</label>
+                                    </div>
+                                    <div class="col-lg-2 col-sm-3 col-5">
+                                    <input class="form-control" type="date" name="vaccinnatedDate2"  >
+                                    </div>
+                                </div>
+                                <%}
+                          
+                         %>
+                        <div class="mb-1 row g-2 align-items-center">
+                            <div class="col-lg-2 col-sm-3 col-5">
+                            <label  class="col-form-label" style="font-size:20px ;">Test Covid:</label>
+                            </div>
+                            <div class="col-lg-2 col-sm-3 col-5" >
+                                <% if(covidInfo.covidStatus) {%>
+                                   
+                                    <select class="form-select" name="covidStatus" >
+                                        <option value="<%= covidInfo.covidStatus %>"> <%= covidInfo.covidStatus?'Dương tính':"Âm tính" %> </option>
+                                        
+                                    </select>
+                                    <%}
+                                    else {
+                                        %>
+                                       <select class="form-select" name="covidStatus" >
+                                        <option value="false">Âm tính</option>
+                                        <option value="true">Dương tính</option>  
+                                    </select> 
+                                        <%
+                                    }
+                                %>
+                                
+                            </div>
+                        </div>
+                        <div class="my-3">
+                         <button type="submit" class="btn btn-primary" style="background-color:rgb(32, 70, 187) ;">Đăng ký</button>
+                         </div>
+                    </form>
+                    <%}
+                %>
             </div>
         </div>
     </main>

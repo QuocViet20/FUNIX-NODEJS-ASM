@@ -17,8 +17,9 @@
                         </div>
                         </div>
                         <div class=" mt-2 d-flex justify-content-center " >
-                            <a href="/staff/start" class="btn btn-success mx-2  ">Bắt đầu</a>
-                            <a href="/staff/startCheckIn" class="btn btn-danger mx-2">Kết thúc</a>
+                            
+                            <a href="<%= !endSession.checkOut ? '/staff/startCheckIn':'/staff/start' %>" class="btn <%= !endSession.checkOut ? 'btn-danger':'btn-success' %> mx-2  "><%= !endSession.checkOut ? 'Kết thúc ':'Bắt đầu' %></a>
+                            <!-- <a href="/staff/startCheckIn" class="btn btn-danger mx-2">Kết thúc</a> -->
                             <a href="/staff/formDayoff" class="btn btn-warning mx-2">Nghỉ phép</a>
                         </div>
                 </div>
