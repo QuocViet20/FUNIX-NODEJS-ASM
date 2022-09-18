@@ -33,10 +33,12 @@
   <nav class="bg-info">
     <nav class=" container navbar navbar-expand-sm navbar-dark bg-info">
       <div class="container-fluid">
-        <a class="navbar-brand text-dark text-uppercase" href="/infomation">Home</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+      
+          <a class="navbar-brand  text-uppercase <%= path==='/homePage' ? 'text-warning' : 'text-dark' %>" href="/homePage">Home</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          
         <div class="collapse navbar-collapse " id="mynavbar">
         <% if (isAuthenticated){%>
           <ul class="navbar-nav me-auto">
