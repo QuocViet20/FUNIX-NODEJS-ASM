@@ -1,0 +1,55 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+
+            <main>
+                <% if (staffs.length > 0) { %>
+                    <div class="container">
+                      <h2 class="text-center text-uppercase mt-4">Danh sách nhân viên bộ phận <%= staff.department%></h2>
+                      <hr/>
+                      <div class="mt-4 d-flex justify-content-center">
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                  <th scope="col" class="text-uppercase text-center">No.</th>
+                                  <th scope="col" class="text-uppercase text-center">Id</th>
+                                  <th scope="col" class="text-uppercase text-center">Name</th>
+                                  <th scope="col" class="text-uppercase text-center">Infomation</th>
+                                  <th scope="col" class="text-uppercase text-center">Session</th>
+                                  <th scope="col" class="text-uppercase text-center">edit</th>
+                                  <th scope="col" class="text-uppercase text-center">Delete</th>
+                                  <!-- <th scope="col">Giờ làm thêm</th> -->
+                                </tr>
+                              </thead>
+                           
+                              <tbody>
+                              
+                                <%
+                                staffs.forEach(staff=>{%>
+                                  <tr>
+                                    <th scope="row" class="text-center"><%= staffs.findIndex(s=>s===staff)+1 %></th>
+                                    <td  class="text-center"><%= staff._id.toString().slice(0,6) %></td>
+                                    <td  class="text-center"><%= staff.name %></td>
+                                    <td  class="text-center"><a href="/admin/staff/infomation/<%=staff._id%>" class="btn btn-success">Detail</a></td>
+                                    <td  class="text-center"><a href="/admin/staff/session/<%=staff._id%>" class="btn btn-primary">Session</a></td>
+                                    <td  class="text-center"><a href="/admin/edit-staff/<%=staff._id%>?edit=true" class="btn btn-warning">Edit</a></td>
+                                    <td  class="text-center"><form action="/admin/delete-staff" method="POST">
+                                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                      <input type="hidden" name="staffId" value="<%= staff._id %>">
+                                      <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                    </td>
+                                  </tr>  
+                                    
+                                    <% })%>
+                              </tbody>
+                          </table>
+                        </div>   
+                    </div>
+                    <% } else { %>
+                        <h1>No Staff Found!</h1>
+                        <% } %>
+            </main>
+            <%- include('../includes/end.ejs') %>

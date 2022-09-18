@@ -1,0 +1,22 @@
+<section class="pagination">
+    <% if(currentPage!==1 && previousPage!==1) { %>
+        <a href="/staff/infoSessions?page=1">1</a>
+    <%}%>
+
+    <% if(hasPreviousPage) {%>
+        <a href="/staff/infoSessions?page=<%= previousPage %>"><%= previousPage %></a> 
+        <%}
+    %>
+
+    <a href="/staff/infoSessions?page=<%= currentPage %>" class="active"><%= currentPage %></a>
+
+    <% if(hasNextPage) { %>
+        <a href="/staff/infoSessions?page=<%= nextPage %>"><%= nextPage %></a> 
+        <%}
+    %>
+
+    <% if(nextPage!==lastPage && lastPage!==currentPage) {%>
+        <a href="/staff/infoSessions?page=<%= lastPage %>"><%= lastPage %></a> 
+        <%}
+    %>
+</section>

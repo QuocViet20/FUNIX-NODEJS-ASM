@@ -1,5 +1,12 @@
 const CovidInfo = require("../models/covidInfo");
 const Session = require("../models/session");
+const Staff = require("../models/staff");
+
+const { validationResult } = require("express-validator/check");
+
+const fileHelper = require("../util/file");
+
+const ITEMS_PER_PAGE = 1;
 
 exports.getStaff = (req, res, next) => {
   Session.find({
@@ -13,7 +20,11 @@ exports.getStaff = (req, res, next) => {
         path: "/staff",
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
 exports.getStaffStart = (req, res, next) => {
   res.render("staff/getStaffStart", {
@@ -35,7 +46,7 @@ exports.postAddSession = (req, res, next) => {
     checkIn: new Date(),
     staffId: req.staff._id,
   });
-  Session.find()
+  Session.find({ staffId: req.staff._id })
     .then((sessions) => {
       const CheckOutFilter = sessions.filter((s) => !s.checkOut);
       if (CheckOutFilter.length > 0) {
@@ -44,6 +55,7 @@ exports.postAddSession = (req, res, next) => {
 
         return res.render("staff/sessionCheckIn", {
           errMsg: errMsg,
+          staff: req.staff,
           pageTitle: "errorCheckIn",
           path: "/staff",
         });
@@ -56,11 +68,15 @@ exports.postAddSession = (req, res, next) => {
           .catch((err) => console.log(err));
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
 
 exports.getStaffCheckIn = (req, res, next) => {
-  Session.find()
+  Session.find({ staffId: req.staff._id })
     .then((sessions) => {
       res.render("staff/sessionCheckIn", {
         session: sessions[sessions.length - 1],
@@ -73,17 +89,22 @@ exports.getStaffCheckIn = (req, res, next) => {
           ),
         staffName: req.staff.name,
         pageTitle: "staff-CheckIn",
+        staff: req.staff,
         path: "/staff",
         errMsg: null,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
 
 exports.updateSession = (req, res, next) => {
   const sessionId = req.body.sessionId;
   const d = new Date();
-  Session.find()
+  Session.find({ staffId: req.staff._id })
     .then((sessions) => {
       const sessionsFilterCheckOut = sessions.filter((s) => !s.checkOut);
       if (sessionsFilterCheckOut.length > 0) {
@@ -97,7 +118,11 @@ exports.updateSession = (req, res, next) => {
           .then((result) => {
             res.redirect("/staff/sessions");
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(err);
+          });
       } else {
         const errMsg = "Bạn đã checkOut rồi";
         console.log(errMsg);
@@ -108,12 +133,16 @@ exports.updateSession = (req, res, next) => {
         });
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
 
 exports.getSessions = (req, res, next) => {
   const d = new Date().getDate();
-  Session.find()
+  Session.find({ staffId: req.staff._id })
     .then((sessions) => {
       const sessionsToday = sessions.filter((s) => {
         return s.checkOut.getDate() === d;
@@ -132,6 +161,7 @@ exports.getSessions = (req, res, next) => {
       res.render("staff/getSessions", {
         sessions: sessionsTd,
         tongWorkTimes: tongTimes,
+        staff: req.staff,
         staffName: req.staff.name,
         pageTitle: "staff-Sessions",
         path: "/staff",
@@ -139,7 +169,11 @@ exports.getSessions = (req, res, next) => {
       });
     })
 
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
 
 exports.getFormDayoff = (req, res, next) => {
@@ -147,38 +181,82 @@ exports.getFormDayoff = (req, res, next) => {
     staff: req.staff,
     pageTitle: "formDayoff",
     path: "/staff",
+    errMsg: "",
+    validationErrors: [],
+    oldInput: {
+      dateOff: "",
+      quantityDays: "",
+      reason: "",
+    },
   });
 };
 
 exports.postAddAnnualLeav = (req, res, next) => {
   const dateOff = req.body.dayOff;
-  console.log(typeof dateOff);
   let dateOffArr = dateOff.split(",");
-  console.log(dateOffArr.length);
   const quantityDays = req.body.quantityDayoffs;
   const reason = req.body.reason;
   const staffAnnualLeave = req.staff.annualLeave;
+  const errors = validationResult(req);
+  console.log(errors.array());
+  if (!errors.isEmpty()) {
+    return res.status(422).render("staff/formDayoff", {
+      staff: req.staff,
+      pageTitle: "errDayoff",
+      path: "/staff",
+      errMsg: errors.array()[0].msg,
+      oldInput: {
+        dateOff: dateOff,
+        quantityDays: quantityDays,
+        reason: reason,
+      },
+      validationErrors: errors.array(),
+    });
+  }
   if (staffAnnualLeave.leffDayOff === 0) {
     const errMsg = "Bạn đã dùng hết số ngày nghỉ phép";
-    return res.render("staff/getDayoff", {
-      errMsg: errMsg,
+    return res.render("staff/formDayoff", {
+      staff: req.staff,
       pageTitle: "errDayoff",
       path: "/staff",
+      errMsg: errMsg,
+      oldInput: {
+        dateOff: dateOff,
+        quantityDays: quantityDays,
+        reason: reason,
+      },
+      validationErrors: [],
     });
-  } else if (quantityDays / 8 > staffAnnualLeave.leffDayOff) {
+  }
+  if (quantityDays / 8 > staffAnnualLeave.leffDayOff) {
     const errMsg = "Số giờ bạn chọn quá tối đa bạn có thể chọn";
-    return res.render("staff/getDayoff", {
-      errMsg: errMsg,
+    return res.render("staff/formDayoff", {
+      staff: req.staff,
       pageTitle: "errDayoff",
       path: "/staff",
+      errMsg: errMsg,
+      oldInput: {
+        dateOff: dateOff,
+        quantityDays: quantityDays,
+        reason: reason,
+      },
+      validationErrors: [],
     });
-  } else if (quantityDays > 8) {
+  }
+  if (quantityDays > 8) {
     const errMsg =
       "Một ngày bạn chỉ chọn tối đa 8h, vui lòng trở lại và chọn lại!!!";
-    return res.render("staff/getDayoff", {
-      errMsg: errMsg,
+    return res.render("staff/formDayoff", {
+      staff: req.staff,
       pageTitle: "errDayoff",
       path: "/staff",
+      errMsg: errMsg,
+      oldInput: {
+        dateOff: dateOff,
+        quantityDays: quantityDays,
+        reason: reason,
+      },
+      validationErrors: [],
     });
   } else {
     staffAnnualLeave.leffDayOff =
@@ -197,7 +275,11 @@ exports.postAddAnnualLeav = (req, res, next) => {
         console.log(result);
         res.redirect("/staff/dayoff");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(err);
+      });
   }
 };
 
@@ -223,6 +305,7 @@ exports.getDayoff = (req, res, next) => {
 
 exports.getStaffInfo = (req, res, next) => {
   res.render("staff/getStaffInfo", {
+    staffInfo: null,
     staff: req.staff,
     errMsg: null,
     pageTitle: "Information",
@@ -231,43 +314,92 @@ exports.getStaffInfo = (req, res, next) => {
 };
 
 exports.staffUpdateImage = (req, res, next) => {
-  const newImg = req.body.imageUrl;
-  req.staff.imageUrl = newImg;
+  const image = req.file;
+  console.log(req.staff.imageUrl);
+  // fileHelper.deleteFile(req.staff.imageUrl);
+
+  req.staff.imageUrl = image.path;
   return req.staff
     .save()
     .then((result) => {
       res.redirect("/staff/information");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
 
 exports.getInfoSessions = (req, res, next) => {
-  Session.find({
-    staffId: req.staff._id,
-  })
-    .then((sessions) => {
-      const dayOffs = req.staff.annualLeave.dayOffs;
-      const dayOffsSort = dayOffs.sort((a, b) =>
-        a.dateOff > b.dateOff ? 1 : a.dateOff < b.dateOff ? -1 : 1
-      );
-      const sessionsSort = sessions.sort((a, b) =>
-        a.checkIn > b.checkIn ? 1 : a.checkIn < b.checkIn ? -1 : 1
-      );
+  const page = +req.query.page || 1;
+  let totalItems;
+  let adminName = "";
 
-      res.render("staff/getInfoSessions", {
-        sessions: sessionsSort,
-        dayOffs: dayOffsSort,
-        salaryProper: null,
-        staff: req.staff,
-        pageTitle: "staff-Sessions",
-        path: "/staff/infoSessions",
-        errMsg: null,
-      });
+  Staff.find({
+    role: "manager",
+    department: req.staff.department,
+  })
+    .then((admin) => {
+      return (adminName = admin[0].name);
     })
-    .catch((err) => console.log(err));
+    .then((result) => {
+      Session.find({ staffId: req.staff._id })
+        .countDocuments()
+        .then((numSessions) => {
+          totalItems = numSessions;
+          // console.log(numSessions);
+          return Session.find({ staffId: req.staff._id })
+            .skip((page - 1) * ITEMS_PER_PAGE)
+            .limit(ITEMS_PER_PAGE);
+        })
+        .then((sessions) => {
+          const dayOffs = req.staff.annualLeave.dayOffs;
+          const dayOffsSort = dayOffs.sort((a, b) =>
+            a.dateOff > b.dateOff ? 1 : a.dateOff < b.dateOff ? -1 : 1
+          );
+          const sessionsSort = sessions.sort((a, b) =>
+            a.checkIn > b.checkIn ? 1 : a.checkIn < b.checkIn ? -1 : 1
+          );
+
+          res.render("staff/getInfoSessions", {
+            adminName: adminName,
+            sessions: sessionsSort,
+            dayOffs: dayOffsSort,
+            salaryProper: null,
+            staff: req.staff,
+            pageTitle: "staff-Sessions",
+            path: "/staff/infoSessions",
+            errMsg: null,
+            currentPage: page,
+            hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+            hasPreviousPage: page > 1,
+            nextPage: page + 1,
+            previousPage: page - 1,
+            lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
+          });
+        });
+    })
+
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
 
 exports.postSalaryMonth = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
+  const adminName = "";
+  if (req.staff.role === "staff") {
+    Staff.find({
+      role: "manager",
+      department: req.staff.department,
+    }).then((admin) => {
+      return (adminName = admin[0].name);
+    });
+  }
   const monthString = req.body.month;
   const [inputMonth, inputYear] = monthString
     .split("/")
@@ -281,6 +413,14 @@ exports.postSalaryMonth = (req, res, next) => {
       $lte: endOfMonth,
     },
   })
+    .countDocuments()
+    .then((numSessions) => {
+      totalItems = numSessions;
+      // console.log(numSessions);
+      return Session.find({ staffId: req.staff._id })
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+    })
     .then((sessions) => {
       const dayOffs = req.staff.annualLeave.dayOffs;
       const dayOffsSort = dayOffs.sort((a, b) =>
@@ -308,7 +448,14 @@ exports.postSalaryMonth = (req, res, next) => {
         });
 
         // console.log(sum);
-        const dayOffFilter = dayOffs.filter((d) => d.dateOff.getDate() === j);
+        const dayOffFilter = dayOffs.filter((d) => {
+          let arr = d.dateOff.split(",");
+          for (let i = 0; i < arr.length - 1; i++) {
+            return parseInt(arr[i].slice(3, 5)) === j;
+          }
+          console.log(arr);
+        });
+        console.log(dayOffFilter);
         const dateOffMap = dayOffFilter.map((d) => {
           hourOff += d.quantityDays;
         });
@@ -348,7 +495,7 @@ exports.postSalaryMonth = (req, res, next) => {
       const salaryMonth =
         req.staff.salaryScale * 3000000 + (overtimeMonth - subHours) * 200000;
       const ctt =
-        "Lương = salaryScale * 3000000 + (overTime - số giờ làm thiếu) * 200000. Số giờ làm còn thiếu là khi chưa đủ 8h/ngày kể cả đã cộng annualLeave của ngày đ";
+        "Lương = salaryScale * 3000000 + (overTime - số giờ làm thiếu) * 200000. Số giờ làm còn thiếu là khi chưa đủ 8h/ngày kể cả đã cộng annualLeave của ngày đó.";
       const salaryProper = {
         salary: salaryMonth,
         overtime: overtimeMonth,
@@ -366,13 +513,30 @@ exports.postSalaryMonth = (req, res, next) => {
         pageTitle: "staff-Sessions",
         path: "/staff/infoSessions",
         errMsg: null,
+        adminName: adminName,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
 
 // form covid info
 exports.getFormCovidInfo = (req, res, next) => {
+  let message = req.flash("error");
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
   CovidInfo.find({ staffId: req.staff._id })
     .then((covidInfos) => {
       if (covidInfos.length > 0) {
@@ -385,7 +549,7 @@ exports.getFormCovidInfo = (req, res, next) => {
           staff: req.staff,
           pageTitle: "Covid-Detail",
           path: "/staff/form-covidInfo",
-          errMsg: null,
+          errMsg: message,
         });
       } else {
         return res.render("staff/formCovidInfo", {
@@ -393,7 +557,7 @@ exports.getFormCovidInfo = (req, res, next) => {
           staff: req.staff,
           pageTitle: "Covid-Detail",
           path: "/staff/form-covidInfo",
-          errMsg: null,
+          errMsg: message,
         });
       }
     })
@@ -410,9 +574,11 @@ exports.postAddCovidInfo = (req, res, next) => {
   const vaccineType2 = req.body.vaccineType2;
   const vaccinnatedDate2 = req.body.vaccinnatedDate2;
   const covidStatus = req.body.covidStatus;
-  console.log(vaccinnated2, vaccineType2, vaccinnatedDate2);
-  console.log(vaccinnatedDate1);
 
+  if (!temperature) {
+    req.flash("error", "Vui lòng điền thân nhiệt của bạn.");
+    return res.redirect("/staff/form-covidInfo");
+  }
   let vaccine = [];
   if (vaccinnated1 === "yes") {
     vaccine.push({
@@ -448,7 +614,11 @@ exports.postAddCovidInfo = (req, res, next) => {
     .then((result) => {
       res.redirect("/staff/covidInfo");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
 
 exports.getCovidInfo = (req, res, next) => {
@@ -463,5 +633,9 @@ exports.getCovidInfo = (req, res, next) => {
         errMsg: null,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };

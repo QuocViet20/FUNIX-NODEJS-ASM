@@ -46,6 +46,7 @@
                             <div class=" mt-2 d-flex justify-content-center" >
                                 <form action="/staff/update-session" method="POST">
                                 <input type="hidden" value="<%= session._id %>" name="sessionId">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <button class="btn-danger" type="submit">Kết thúc phiên</button>
                                 </form>
                             </div>

@@ -1,0 +1,32 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+
+            <main>
+                <% if (staffs.length > 0) { %>
+                    <div class="container">
+                      <h2 class="text-center text-uppercase mt-4">Danh sách thông tin đăng ký covid nhân viên</h2>
+                      <hr/>
+                      <div class="row ">
+                        <% for (let staff of staffs) { %>
+                            
+                              
+                                 <a href="/admin/staff/<%=staff._id%>" class=" col-lg-2 col-md-4 col-8  py-1 " style="text-decoration: none;" >
+                                    <div class="card   ">
+                                      <img src="/<%=staff.imageUrl%>" class="card-img-top mt-2" alt="...">
+                                      <div class="card-body">
+                                        <p class="card-title text-center text-dark" style="font-size: 20px;"><%= staff.name%></p>
+                                      </div>
+                                    </div>
+                                  </a>
+                                    
+                                    <% } %>
+                                  </div>
+                    </div>
+                    <% } else { %>
+                        <h1>No Staff Found!</h1>
+                        <% } %>
+            </main>
+            <%- include('../includes/end.ejs') %>

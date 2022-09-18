@@ -1,0 +1,65 @@
+<%- include('../includes/head.ejs') %>
+ <style>
+
+input.invalid
+{
+  border-color: red;
+}
+ </style>
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main >
+       <div class="container">
+        <h1 class="mt-2 d-flex justify-content-center text-uppercase">Đăng nhập tài khoản</h1>
+        <hr/>
+        <div  class=" py-1 d-flex justify-content-center align-items-center">
+            <div class="col-lg-4 col-sm-6 col-10">
+                <% if (errorMessage) { %>
+                    <div class="mb-4" style=" margin: auto;
+                    width: 90%;
+                    border: 1px solid #4771fa;
+                    padding: 0.5rem;
+                    border-radius: 3px;
+                    background: #b9c9ff;
+                    text-align: center;
+                    font-size: 20px;
+                    border-color: red;
+                    background: rgb(255, 176, 176);
+                    color: red;">
+                        <%= errorMessage %></div>
+                <% } %>
+            <form action="/login" method="POST" novalidate>
+                <div class="mb-2 ">
+                    <h4 class="text-success" >Email:</h4>
+                    <input  
+                    class="form-control my-1 <%= validationErrors.find(e=>e.param==='email')?'invalid': ''%>" 
+                    type="email"  
+                    name="email" 
+                    placeholder="nguyenvanA@gmail.com"
+                    value="<%= oldInput.email%>"
+                   >
+                    
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Mật khẩu:</h4>
+                    <input 
+                    type="password" 
+                    name="password" 
+                    class="form-control <%= validationErrors.find(e=>e.param==='password')?'invalid': ''%>"  
+                    value="<%= oldInput.password%>">
+                </div>
+               
+                <div class="mb-3">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                </div>
+            </form>
+             </div>
+        </div>
+    </div>
+        
+    </main>
+    <%- include('../includes/end.ejs') %>

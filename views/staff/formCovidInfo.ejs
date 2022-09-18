@@ -1,4 +1,12 @@
 <%- include('../includes/head.ejs') %>
+
+ <style>
+
+input.invalid
+{
+  border-color: red;
+}
+ </style>
 </head>
 
 <body>
@@ -15,7 +23,22 @@
             <hr/>
             <div>
                 <h3 class="mt-2 d-flex justify-content-center text-uppercase text-center" style="font: size 20px;color: rgb(211, 14, 14);">Đăng ký thông tin covid cá nhân</h3>
-               <% if(!covidInfo) {%>
+                <% if (errMsg) { %>
+                    <div class="mb-4" style=" margin: auto;
+                    width: 90%;
+                    border: 1px solid #4771fa;
+                    padding: 0.5rem;
+                    border-radius: 3px;
+                    background: #b9c9ff;
+                    text-align: center;
+                    font-size: 20px;
+                   
+                    background: rgb(255, 176, 176);
+                    color: red;">
+                        <%= errMsg %></div>
+                <% } %>
+                <% if(!covidInfo) {%>
+              
                 <form class="mt-2 " action="/staff/add-covidInfo" method="POST">
                    <div class="mt-2 d-flex  ">
                        <p style="font-size:20px ;" >Ngày đo nhiệt độ: <%= (new Date()).getDate().toString().concat("/"+(new Date().getMonth()+1)+"/"+(new Date()).getFullYear()) %></p>
@@ -26,7 +49,11 @@
                        <label  class="col-form-label" style="font-size:20px ;">Thân nhiệt: </label>
                        </div>
                        <div class="col-lg-2 col-sm-3 col-5">
-                       <input class="form-control"  type="text" name="temperature"  >
+                       <input  
+                       class="form-control <%= errMsg?'invalid': ''%>" 
+                        type="text" 
+                        name="temperature"
+                          >
                        </div>
                    </div>
                    <div class="mb-1 row g-2 align-items-center">
@@ -105,6 +132,7 @@
                        </div>
                    </div>
                    <div class="my-3">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button type="submit" class="btn btn-primary" style="background-color:rgb(32, 70, 187) ;">Đăng ký</button>
                     </div>
                </form>
@@ -119,7 +147,7 @@
                             <label  class="col-form-label" style="font-size:20px ;">Thân nhiệt: </label>
                             </div>
                             <div class="col-lg-2 col-sm-3 col-5">
-                            <input class="form-control"  type="text" name="temperature"  >
+                            <input class="form-control <%= errMsg?'invalid': ''%>"  type="text" name="temperature"  >
                             </div>
                         </div>
                         <% if(vaccine1){%>
@@ -273,6 +301,7 @@
                             </div>
                         </div>
                         <div class="my-3">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                          <button type="submit" class="btn btn-primary" style="background-color:rgb(32, 70, 187) ;">Đăng ký</button>
                          </div>
                     </form>

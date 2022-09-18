@@ -1,24 +1,102 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-info">
+<!-- <nav class="navbar navbar-expand-lg navbar-light bg-info">
     <div class="container">
       <a class="navbar-brand text-uppercase" href="/#" >Home</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item mx-2" >
-            <a class="nav-link  <%= path==='/staff' ? 'text-warning' : 'text-dark' %> text-uppercase"  href="/staff" >TimeKeeping</a>
-          </li>
-          <li class="nav-item mx-2   ">
-            <a class="nav-link <%= path==='/staff/information' ? 'text-warning' : 'text-dark' %> text-uppercase"   href="/staff/information">information</a>
-          </li>
-          <li class="nav-item mx-2">
-            <a class="nav-link <%= path==='/staff/infoSessions' ? 'text-warning' : 'text-dark' %> text-uppercase"   href="/staff/infoSessions">reference</a>
-          </li>
-          <li class="nav-item mx-2">
-            <a class="nav-link <%= path==='/staff/form-covidInfo' ? 'text-warning' : 'text-dark' %>  text-uppercase"  href="/staff/form-covidInfo" >covid detail</a>
-          </li>
+      <div class=" collapse navbar-collapse" id="navbarNav">
+        <div class="d-flex justify-content-between ">
+          <ul class="navbar-nav">
+            <li class="nav-item mx-2" >
+              <a class="nav-link  <%= path==='/staff' ? 'text-warning' : 'text-dark' %> text-uppercase"  href="/staff" >TimeKeeping</a>
+            </li>
+            <li class="nav-item mx-2   ">
+              <a class="nav-link <%= path==='/staff/information' ? 'text-warning' : 'text-dark' %> text-uppercase"   href="/staff/information">information</a>
+            </li>
+            <li class="nav-item mx-2">
+              <a class="nav-link <%= path==='/staff/infoSessions' ? 'text-warning' : 'text-dark' %> text-uppercase"   href="/staff/infoSessions">reference</a>
+            </li>
+            <li class="nav-item mx-2">
+              <a class="nav-link <%= path==='/staff/form-covidInfo' ? 'text-warning' : 'text-dark' %>  text-uppercase"  href="/staff/form-covidInfo" >covid detail</a>
+            </li>
+          </ul>
+        
+          <div class="nav-item mx-2  justify-content-right">
+            <a class="nav-link <%= path==='/login' ? 'text-warning' : 'text-dark' %>  text-uppercase"  href="/login" >Login</a>
+          </div>
         </ul>
+        </div>
       </div>
     </div>
+  </nav> -->
+ 
+  <nav class="bg-info">
+    <nav class=" container navbar navbar-expand-sm navbar-dark bg-info">
+      <div class="container-fluid">
+        <a class="navbar-brand text-dark text-uppercase" href="/infomation">Home</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse " id="mynavbar">
+        <% if (isAuthenticated){%>
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link  <%= path==='/staff' ? 'text-warning' : 'text-dark' %> text-uppercase"  href="/staff" >TimeKeeping</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link <%= path==='/staff/information' ? 'text-warning' : 'text-dark' %> text-uppercase"   href="/staff/information">information</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link <%= path==='/staff/infoSessions' ? 'text-warning' : 'text-dark' %> text-uppercase"   href="/staff/infoSessions">reference</a>
+            </li>
+            <%if(staff.role==='staff'){%>
+              <li class="nav-item">
+                <a class="nav-link <%= path==='/staff/form-covidInfo' ? 'text-warning' : 'text-dark' %>  text-uppercase"  href="/staff/form-covidInfo" >covid detail</a>
+              </li>
+              <%}
+            %>
+            <%
+            if(staff.role==='manager'){%>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-uppercase  <%= path==='/staff/form-covidInfo' ? 'text-warning' : 'text-dark' %> " href="/staff/form-covidInfo" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  covid detail
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item text-uppercase" href="/staff/form-covidInfo">Register information</a></li>
+                    <li><a class="dropdown-item text-uppercase" href="/admin/covidStaffs">covid management</a></li>
+                </ul>
+              </li>
+              <%}
+            %>
+              
+            <%
+            if(staff.role==='manager'){%>
+              <li class="nav-item">
+                <a class="nav-link <%= path==='/admin/adminManager' ? 'text-warning' : 'text-dark' %>  text-uppercase"  href="/admin/adminManager" >admin</a>
+              </li>
+              <%}%>
+          </ul>
+          <%}
+        %>
+           
+              <ul class="navbar-nav me-auto ">
+                <% if(!isAuthenticated){%>
+                  <li class="nav-item ">
+                    <a class="nav-link <%= path==='/login' ? 'text-warning' : 'text-dark' %>  text-uppercase"  href="/login" >Login</a>
+                  </li> 
+                  <%} else{%>
+                    <li class="nav-item">
+    
+                      <form class="nav-item " action="/logout" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit" class="btn-info text-uppercase " style="border:none ;">Logout</button>
+                      </form>
+                    </li>
+                    <%}
+                %>
+            </ul> 
+             
+        </div>
+      </div>
+    </nav>
   </nav>

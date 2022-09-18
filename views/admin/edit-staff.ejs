@@ -1,5 +1,11 @@
 <%- include('../includes/head.ejs') %>
- 
+<style>
+
+    input.invalid
+    {
+      border-color: red;
+    }
+     </style>
 </head>
 
 <body>
@@ -7,47 +13,150 @@
 
     <main >
        
-        <h1 class="mt-2 d-flex justify-content-center text-uppercase">thêm nhân viên mới</h1>
+        <h1 class="mt-2 d-flex justify-content-center text-uppercase"><%=editing?'sửa thông tin nhân viên':'thêm nhân viên mới'%></h1>
         <hr/>
         <div  class=" py-1 d-flex justify-content-center align-items-center">
             <div class="col-lg-4 col-sm-6 col-10">
-            <form action="/admin/add-staff" method="POST">
+                <% if (errorMessage) { %>
+                    <div class="mb-4" style=" margin: auto;
+                    width: 90%;
+                    border: 1px solid #4771fa;
+                    padding: 0.5rem;
+                    border-radius: 3px;
+                    background: #b9c9ff;
+                    text-align: center;
+                    font-size: 20px;
+                    border-color: red;
+                    background: rgb(255, 176, 176);
+                    color: red;">
+                        <%= errorMessage %></div>
+                <% } %>
+            <form action="<%=editing?'/admin/edit-staff' :'/admin/add-staff'%>" method="POST" enctype="multipart/form-data">
+                <% if(!editing){%>
+
+                    <div class="mb-2 ">
+                        <h4 class="text-success" >E-mail:</h4>
+                        <input 
+                        type="email" 
+                        class="form-control my-1 <%= validationErrors.find(e=>e.param==='email')?'invalid': ''%>" 
+                        name="email" 
+                        value="<% if (editing || hasError) { %><%= staffInfo.email %><% } %>"
+                        placeholder="nguyenvanA@gmail.com">
+                    </div>
+                    <div class="mb-3">
+                        <h4 class="text-success" >Mật khẩu:</h4>
+                        <input 
+                        type="password" 
+                        name="password" 
+                        value="<% if ( hasError) { %><%= staffInfo.password %><% } %>"
+                        class="form-control <%= validationErrors.find(e=>e.param==='password')?'invalid': ''%>"  >
+                    </div>
+                    <div class="mb-3">
+                        <h4 class="text-success" >Nhập lại mật khẩu:</h4>
+                        <input 
+                        type="password" 
+                        name="confirmPassword" 
+                        value="<% if ( hasError) { %><%= staffInfo.confirmPassword %><% } %>"
+                        class="form-control  <%= validationErrors.find(e=>e.param==='confirmPassword')?'invalid': ''%>"  >
+                    </div>
+                    <%}
+                %>
                 <div class="mb-2 ">
                     <h4 class="text-success" >Tên nhân viên</h4>
-                    <input type="text" class="form-control my-1" name="name" placeholder="Nguyễn Văn A">
+                    <input 
+                    type="text" 
+                    class="form-control my-1 <%= validationErrors.find(e=>e.param==='name')?'invalid': ''%>" 
+                    name="name"
+                    value="<% if (editing || hasError) { %><%= staffInfo.name %><% } %>" 
+                    placeholder="Nguyễn Văn A">
+                </div>
+                <div class="mb-3">
+                    <h4 class="text-success" >Chức vụ: </h4>
+                    <% if(editing || hasError){%>
+                        <select class="form-select" name="role">
+                            <option value="<%= staffInfo.role %>" selected><%= staffInfo.role==='staff'?'Nhân viên':'Quản lý' %></option>
+                            <option value="staff">Nhân viên</option>
+                            <option value="manager">Quản lý</option>
+                        </select>
+                        <%} else{%>
+                        
+                            <select class="form-select" name="role">
+                                <option value="staff">Nhân viên</option>
+                                <option value="manager">Quản lý</option>
+                              </select>
+                            <%}
+                    %>
                 </div>
                 <div class="mb-3">
                     <h4 class="text-success" >Ngày sinh</h4>
-                    <input type="date" name="doB" class="form-control"  >
+                    <input 
+                    type="date" 
+                    name="doB" 
+                    value="<% if (editing || hasError) { %><%= staffInfo.doB %><% } %>"
+                    class="form-control <%= validationErrors.find(e=>e.param==='doB')?'invalid': ''%>"  >
                 </div>
                 <div class="mb-3">
                     <h4 class="text-success" >Ngày vào công ty</h4>
-                    <input type="date" class="form-control" name="startDate" >
+                    <input 
+                    type="date" 
+                    class="form-control  <%= validationErrors.find(e=>e.param==='startDate')?'invalid': ''%>" 
+                    name="startDate"
+                    value="<% if (editing || hasError) { %><%= staffInfo.startDate %><% } %>" >
                 </div>
                 <div class="mb-3">
                     <h4 class="text-success" >Bộ phận</h4>
-                    <select class="form-select" name="department">
-                        <option value="IT">IT</option>
-                        <option value="HR">HR</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Sale">Sale</option>
-                        <option value="Finance">Finance</option>
-                      </select>
+                    <% if( editing || hasError){%>
+                        <select class="form-select" name="department">
+                            <option value="<%= staffInfo.department %>" selected><%= staffInfo.department %></option> 
+                            <option value="IT">IT</option>
+                            <option value="HR">HR</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Sale">Sale</option>
+                            <option value="Finance">Finance</option>
+                        </select>
+                        <%}else{%>
+
+                            <select class="form-select" name="department">
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sale">Sale</option>
+                                <option value="Finance">Finance</option>
+                            </select>
+                            <%}
+                        %>
                 </div>
                 <div class="mb-3">
                     <h4 class="text-success" >Hệ số lương</h4>
-                    <input type="text" class="form-control" name="salaryScale" placeholder="1.2">
+                    <input 
+                    type="number" 
+                    class="form-control <%= validationErrors.find(e=>e.param==='salaryScale')?'invalid': ''%>" 
+                    name="salaryScale" 
+                    value="<% if (editing || hasError) { %><%= staffInfo.salaryScale %><% } %>"
+                    step="0.1" >
                 </div>
                 <div class="mb-3">
                     <h4 class="text-success" >Số ngày nghỉ phép</h4>
-                    <input type="number" class="form-control" name="annualLeave" placeholder="7" >
+                    <input 
+                    type="number" 
+                    class="form-control <%= validationErrors.find(e=>e.param==='annualLeave')?'invalid': ''%>"
+                     name="annualLeave"
+                     value="<% if (editing || hasError) { %><%= staffInfo.annualLeave.leffDayOff %><% } %>"  >
                 </div>
                 <div class="mb-3">
-                    <h4 class="text-success" >Ảnh thẻ</h4>
-                    <input type="text" class="form-control" name="imageUrl" placeholder="Hãy nhập đường dẫn link ảnh vào">
+                    <h4 class="text-success <%=errorMessage?'invalid': ''%>" >Ảnh thẻ</h4>
+                    <input 
+                    class="form-control "
+                    type="file" 
+                    name="image" 
+                    id="image">
                 </div>
                 <div class="mb-3">
-                    <button type="submit" class="btn btn-primary">Thêm mới</button>
+                    <% if (editing) { %>
+                        <input type="hidden" value="<%= staffInfo._id %>" name="staffId">
+                    <% } %>
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn btn-primary"><%= editing?'Thay đổi':'Thêm mới'%></button>
                 </div>
             </form>
         </div>

@@ -1,5 +1,25 @@
 
 <%- include('../includes/head.ejs') %>
+<style>
+  .pagination{
+  text-align: center;
+  margin-top: 2rem;
+}
+  .pagination a{
+  text-decoration:none;
+  color: #00695c;
+  padding: 0 0.5rem;
+  border: 1px solid #00695c;
+  margin: 0 1rem;
+}
+
+.pagination a:hover,
+.pagination a:active,
+.pagination a.active{
+  background: #00695c;
+  color: aliceblue;
+}
+</style>
 </head>
 
 <body>
@@ -14,6 +34,9 @@
                     <div style="font-size:25px">Tên nhân viên: <%= staff.name %></div>
                 
                     <div style="font-size:25px">Bộ phận: <%= staff.department%></div>
+                    <% if(adminName){%>
+                      <div style="font-size:25px">Quản lý bộ phận: <%= adminName%></div>
+                      <%}%>
                 </div>
                 <hr/>
                 <h4 class="mt-2 d-flex justify-content-center text-uppercase" style="color:rgb(212, 83, 44) ;">Danh sách các lượt làm</h4>
@@ -51,37 +74,45 @@
                          
                           </tbody>
                       </table>
-                </div>   
-             
+                    </div>   
+                    <%- include('../includes/pagination.ejs', {currentPage: currentPage,previousPage:previousPage,nextPage:nextPage,lastPage:lastPage,hasNextPage:hasNextPage,hasPreviousPage:hasPreviousPage,staffInfoId:null}) %>
+                    <hr/>
                 <h4 class="mt-4 d-flex justify-content-center text-uppercase" style="color:rgb(212, 83, 44) ;">Danh sách đăng ký nghỉ phép</h4>
-                <div class="mt-4 d-flex justify-content-center">
-                    <table class="table table-hover table-bordered">
-                        <thead>
-                            <tr>
-                              <th scope="col">Ngày</th>
-                              <th scope="col">số giờ</th>
-                              <th scope="col">lý do</th>
-                              
-                            </tr>
-                          </thead>
-                       
-                          <tbody>
-                            <%
-                            dayOffs.forEach(d=> { %>
-
+                <% if(dayOffs.length>0){%>
+                  <div class="mt-4 d-flex justify-content-center">
+                      <table class="table table-hover table-bordered">
+                          <thead>
                               <tr>
-                               <td><%= d.dateOff %></td>
-                                <td><%= d.quantityDays %></td>
-                                <td><%= d.reason %></td>
+                                <th scope="col">Ngày</th>
+                                <th scope="col">Số giờ</th>
+                                <th scope="col">Lý do</th>
+                                <th scope="col">Còn lại</th>
+                                
                               </tr>
-                              <%}
-                              )
-                           %>
-                        
+                            </thead>
                          
-                          </tbody>
-                      </table>
-                </div>  
+                            <tbody>
+                              <%
+                              dayOffs.forEach(d=> { %>
+  
+                                <tr>
+                                 <td><%= d.dateOff %></td>
+                                  <td><%= d.quantityDays %></td>
+                                  <td><%= d.reason %></td>
+                                  <td> <%= Math.floor(staff.annualLeave.leffDayOff) %> ngày <%= (staff.annualLeave.leffDayOff*8) -Math.floor(staff.annualLeave.leffDayOff)*8 %> giờ</td>
+                                </tr>
+                                <%}
+                                )
+                             %>
+                          
+                           
+                            </tbody>
+                        </table>
+                  </div>  
+                  <%}else{%>
+                    <h2>Bạn chưa đăng ký ngày nghỉ nào.</h2>
+                    <%}
+                %>
                 
                 <h4 class="mt-2 d-flex justify-content-center text-uppercase" style="color:rgb(212, 83, 44) ;">Chi tiết lương</h4>
                 <div class="mt-4 d-flex justify-content-center">
@@ -95,6 +126,7 @@
                           <input type="text" class="form-control" name="month">
                         </div>
                         <div class="col-auto">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                           <button type="submit" class="btn btn-primary mb-3">Chọn</button>
                         </div>
                       </form>
@@ -106,12 +138,14 @@
                   <div class="mt-4 ">
                             <h6>Tổng giờ làm thêm trong tháng: <%= salaryProper.overtime %> (h)</h6>
                             <h6>Tổng giờ làm thiếu trong tháng: <%= salaryProper.subtraction %> (h)</h6>
-                            <h6>Hệ số lướng tháng của bạn: <%= salaryProper.salaryScale%></h6>
+                            <h6>Hệ số lương tháng của bạn: <%= salaryProper.salaryScale%></h6>
                             <h5 style="color: red ;">Lương tháng của bạn: <%= salaryProper.salary %> (đồng)</h5>
                             <p> Công thức tính lương: <%= salaryProper.formula %></p>
                     </div>
                   
-                  <%}
+                  <%}else{%>
+                    <h2>Bạn khồng có phiên làm việc nào</h2>
+                    <%}
                 %>  
             </div>
             <%} else {

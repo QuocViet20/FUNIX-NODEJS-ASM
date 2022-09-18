@@ -1,0 +1,18 @@
+<%- include('../includes/head.ejs') %>
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main>
+            <div class="container">
+                <h1 class="mt-2 d-flex justify-content-center text-uppercase">Bộ phận <%= staff.department%></h1>
+                <hr/>
+                <div class="mt-2 d-flex justify-content-center ">
+                    <a href="/admin/add-staff" class="btn btn-primary mx-2"> thêm nhân viên</a>
+                    <a href="/admin/listStaffs" class="btn btn-warning mx-2"> danh sách nhân viên </a>
+                </div>
+            </div>
+
+        </main>
+    </body>
+    <%- include('../includes/end.ejs') %>

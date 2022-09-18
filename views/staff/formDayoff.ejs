@@ -3,6 +3,15 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/dubrox/Multiple-Dates-Picker-for-jQuery-UI@master/jquery-ui.multidatespicker.js"></script>
 <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+
+<style>
+
+    .invalid
+    {
+      border-color: red;
+    }
+     </style>
+
 </head>
 
 <body>
@@ -17,19 +26,47 @@
             <div class="col-lg-4 col-sm-6 col-10">
                 <p style="font-size: 25px;" class="text-dark" >Tên nhân viên: <%= staff.name%></p>
                 <p style="font-size: 25px;" class="text-dark" >Phòng ban: <%= staff.department%></p>
+
+                <% if (errMsg) { %>
+                    <div class="mb-4" style=" margin: auto;
+                    width: 90%;
+                    border: 1px solid #4771fa;
+                    padding: 0.5rem;
+                    border-radius: 3px;
+                    background: #b9c9ff;
+                    text-align: center;
+                    font-size: 20px;
+                    border-color: red;
+                    background: rgb(255, 176, 176);
+                    color: red;">
+                        <%= errMsg %></div>
+                <% } %>
             <form action="/staff/add-annualLeave" method="POST">     
                 <div class="mb-3">
                     <h4 class="text-success" >Chọn ngày nghỉ phép</h4>
                   
-                    <input type="text" id="datePick" class="form-control" name="dayOff"/>
+                    <input 
+                    type="text" 
+                    id="datePick" 
+                    class="form-control <%= validationErrors.find(e=>e.param==='dayOff')?'invalid': ''%>" 
+                    name="dayOff"
+                    value="<%= oldInput.dateOff%>"/>
                 </div>
                 <div class="mb-3">
                     <h4 class="text-success" >Chọn số giờ nghỉ</h4>
-                    <input type="number" class="form-control" name="quantityDayoffs" >
+                    <input 
+                    type="number" 
+                    class="form-control <%= validationErrors.find(e=>e.param==='quantityDayoffs')?'invalid': ''%>"
+                     name="quantityDayoffs"
+                     value="<%= oldInput.quantityDays%>" >
                 </div>
                 <div class="mb-3">
                     <h4 class="text-success" >Lý do nghỉ</h4>
-                    <textarea type="text" class="form-control" name="reason" ></textarea>
+                    <textarea 
+                    type="text" 
+                    class="form-control <%= validationErrors.find(e=>e.param==='quantityDayoffs')?'invalid': ''%>" 
+                    name="reason" 
+                    value="<%= oldInput.reason%>"></textarea>
                 </div>
              
                 <div class="mb-3">
@@ -37,6 +74,7 @@
                 </div>
                
                 <div class="mb-3">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button type="submit" class="btn btn-primary">Xác nhận</button>
                 </div>
                 

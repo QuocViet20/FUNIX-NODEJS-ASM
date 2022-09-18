@@ -1,0 +1,87 @@
+<%- include('../includes/head.ejs') %>
+
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+    <main>
+     
+          
+            <div class="container">
+                <h2 class="mt-2 d-flex justify-content-center text-uppercase">Thông tin covid của nhân viên</h2>
+                <hr/>
+                <div class="mt-2 pd-2 ">
+                    <div style="font-size:25px">Tên nhân viên: <%= staffName %></div>
+                    <div style="font-size:25px">Mã Id: <%= staff_Id.toString().slice(0,6) %></div>
+                    <div style="font-size:25px">Bộ phận: <%= staffDepartment%></div>
+                  
+                </div>
+                <hr/>
+                <% if(covidInfo) {%> 
+                    <h4 class="mt-2 d-flex justify-content-center text-uppercase " style="color: #c21523;">Thông tin covid đã đăng ký</h4>
+                    <div class="mt-2 pd-2 ">
+                        <% if(covidInfo.vaccinnated[0]) {
+                            %>
+                            <p style="font-size:25px">Vaccine mũi 1: Đã tiêm </p>
+                            <p style="font-size:25px">Loại Vaccine: <%=covidInfo.vaccinnated[0].vaccineType %> </p>
+                            <p style="font-size:25px">Ngày tiêm: <%= covidInfo.vaccinnated[0].vaccinnatedDate.getDate().toString().concat("/"+(covidInfo.vaccinnated[0].vaccinnatedDate.getMonth()+1)+"/"+covidInfo.vaccinnated[0].vaccinnatedDate.getFullYear())%> </p>
+                            <%
+                           }else{
+                            %> 
+                            <p style="font-size:25px">Vaccine mũi 1:Chưa tiêm </p><%
+                           }
+                           %>
+    
+                           <% if(covidInfo.vaccinnated[1]) {
+                            %>
+                            <p style="font-size:25px">Vaccine mũi 2: Đã tiêm </p>
+                            <p style="font-size:25px">Loại Vaccine: <%=covidInfo.vaccinnated[1].vaccineType %> </p>
+                            <p style="font-size:25px">Ngày tiêm: <%= covidInfo.vaccinnated[1].vaccinnatedDate.getDate().toString().concat("/"+(covidInfo.vaccinnated[1].vaccinnatedDate.getMonth()+1)+"/"+covidInfo.vaccinnated[1].vaccinnatedDate.getFullYear())%> </p>
+                            <%
+                           }else{
+                            %> 
+                            <p style="font-size:25px">Vaccine mũi 2:Chưa tiêm </p><%
+                           }
+                           %>
+                           
+                            <p style="font-size:25px">Kết quả test covid: <%= covidInfo.covidStatus ? "Dương tính":"Âm tính" %></p>
+                          
+                      
+                    </div>
+                    <hr/>
+                    <h4 class="mt-2 d-flex justify-content-center text-uppercase" style="color:rgb(212, 83, 44) ;">Bảng đo thân nhiệt trong 14 ngày gần đây</h4>
+                    <div class="mt-4 d-flex justify-content-center">
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                  <th scope="col">Ngày</th>
+                                  <th scope="col">Giờ</th>
+                                  <th scope="col">Thân nhiệt</th>
+                                  
+                                </tr>
+                              </thead>
+                           
+                              <%
+                              covidInfos.forEach(covidInfo=> { %>
+    
+                                <tr>
+                                 <td><%= covidInfo.declareedDate.getDate().toString().concat("/"+(covidInfo.declareedDate.getMonth()+1)+"/"+covidInfo.declareedDate.getFullYear())%></td>
+                                  <td> <%= covidInfo.declareedDate.getHours().toString().concat("h").concat(covidInfo.declareedDate.getMinutes()>=10?covidInfo.declareedDate.getMinutes().toString():"0"+covidInfo.declareedDate.getMinutes())  %></td>
+                                  <td><%= covidInfo.temperature%> độ</td>
+                                </tr>
+                                <%}
+                                )
+                             %>
+                          </table>
+                          </div>
+                        <a class="btn btn-success" href="/admin/staffCovid/<%=staff_Id%>"> print to Pdf</a>
+                    <%} else{%>
+                        <h1>Nhân viên chưa đăng ký thông tin covid</h1>
+                        <%}
+                     %>
+                </div>   
+                 
+                
+                
+            </main>
+</body>
