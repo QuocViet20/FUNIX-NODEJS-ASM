@@ -1,6 +1,7 @@
 const Staff = require("../models/staff");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator/check");
+const RedirectLink = require("../models/redirectLink");
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash("error");
@@ -13,7 +14,6 @@ exports.getLogin = (req, res, next) => {
     path: "/login",
     pageTitle: "Login",
     errorMessage: message,
-
     oldInput: {
       email: "",
       password: "",
@@ -54,9 +54,23 @@ exports.postLogin = (req, res, next) => {
           if (doMatch) {
             req.session.isLoggedIn = true;
             req.session.staff = staff;
+
             return req.session.save((err) => {
-              console.log(err);
-              res.redirect("/staff");
+              return RedirectLink.findOne({ staffId: staff._id }).then(
+                (rDLink) => {
+                  if (!rDLink) {
+                    const newRdLink = new RedirectLink({
+                      link: "/staff",
+                      staffId: staff._id,
+                    });
+                    newRdLink.save();
+
+                    return res.redirect("/staff");
+                  } else {
+                    return res.redirect(rDLink.link);
+                  }
+                }
+              );
             });
           }
           return res.status(422).render("auth/login", {
@@ -82,6 +96,6 @@ exports.postLogin = (req, res, next) => {
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
     console.log(err);
-    res.redirect("/");
+    res.redirect("/login");
   });
 };

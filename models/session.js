@@ -10,7 +10,7 @@ const sessionSchema = new Schema({
     type: Boolean,
     required: true,
   },
-  workingAll: {
+  confirm: {
     type: Boolean,
     required: true,
   },

@@ -103,6 +103,9 @@ router.get("/staff/session/:staffId", isAuth, adminController.getStaffSession);
 // deleteSession POST
 router.post("/delete-session", isAuth, adminController.postDeleteSession);
 
+// confirmSession POST
+router.post("/confirm-session", isAuth, adminController.postConfirmSession);
+
 // detailMonth POST
 router.post("/staff/detailMonth", isAuth, adminController.postDetailMonth);
 

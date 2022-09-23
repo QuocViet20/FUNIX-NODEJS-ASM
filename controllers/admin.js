@@ -6,6 +6,7 @@ const PDFDocument = require("pdfkit");
 const Staff = require("../models/staff");
 const Session = require("../models/session");
 const CovidInfo = require("../models/covidInfo");
+const RedirectLink = require("../models/redirectLink");
 
 const brcypt = require("bcryptjs");
 const { validationResult } = require("express-validator/check");
@@ -13,6 +14,10 @@ const { validationResult } = require("express-validator/check");
 const ITEMS_PER_PAGE = 3;
 
 exports.getAddStaff = (req, res, next) => {
+  const updateLink = "/admin/add-staff";
+  RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+    rDLink.updateLink(updateLink);
+  });
   res.render("admin/edit-staff", {
     pageTitle: "Add Staff",
     path: "/admin/add-staff",
@@ -34,19 +39,28 @@ exports.getEditStaff = (req, res, next) => {
   Staff.findById(staffId)
     .then((staffInfo) => {
       if (!staffInfo) {
+        const updateLink = "/admin/listStaffs";
+        RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+          rDLink.updateLink(updateLink);
+        });
         return res.redirect("/admin/listStaffs");
+      } else {
+        const updateLink = `/admin/edit-staff/${staffId}?edit=true`;
+        RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+          rDLink.updateLink(updateLink);
+        });
+        return res.render("admin/edit-staff", {
+          pageTitle: "edit Staff",
+          path: "/admin/edit-staff",
+          editing: editMode,
+          hasError: false,
+          staffInfo: staffInfo,
+          staff: req.staff,
+          errorMessage: null,
+          validationErrors: [],
+          isAuthenticated: req.session.isLoggedIn,
+        });
       }
-      return res.render("admin/edit-staff", {
-        pageTitle: "edit Staff",
-        path: "/admin/edit-staff",
-        editing: editMode,
-        hasError: false,
-        staffInfo: staffInfo,
-        staff: req.staff,
-        errorMessage: null,
-        validationErrors: [],
-        isAuthenticated: req.session.isLoggedIn,
-      });
     })
     .catch((err) => console.log(err));
 };
@@ -55,6 +69,10 @@ exports.getCovidStaffs = (req, res, next) => {
   Staff.find({ role: "staff", department: req.staff.department })
     // Product.findAll()
     .then((staffs) => {
+      const updateLink = "/admin/covidStaffs";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       res.render("admin/covidStaffs", {
         staffs: staffs,
         staff: req.staff,
@@ -81,6 +99,10 @@ exports.postAddStaff = (req, res, next) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
+    const updateLink = "/admin/add-staff";
+    RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+      rDLink.updateLink(updateLink);
+    });
     return res.status(422).render("admin/edit-staff", {
       path: "/add-staff",
       pageTitle: "/admin/add-staff",
@@ -104,6 +126,10 @@ exports.postAddStaff = (req, res, next) => {
     });
   }
   if (!image) {
+    const updateLink = "/admin/add-staff";
+    RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+      rDLink.updateLink(updateLink);
+    });
     return res.status(422).render("admin/edit-staff", {
       path: "/add-staff",
       pageTitle: "/admin/add-staff",
@@ -148,6 +174,10 @@ exports.postAddStaff = (req, res, next) => {
     .then((result) => {
       // console.log(result);
       console.log("created staff");
+      const updateLink = "/admin/listStaffs";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       res.redirect("/admin/listStaffs");
     })
     .catch((err) => {
@@ -235,6 +265,10 @@ exports.getStaffInfoCovid = (req, res, next) => {
           return newArr;
         })
         .then((covidInfos) => {
+          const updateLink = `/admin/staff/${staffId}`;
+          RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+            rDLink.updateLink(updateLink);
+          });
           res.render("admin/staffInfoCovid", {
             staff: req.staff,
             staffName: staff.name,
@@ -401,6 +435,10 @@ exports.getPdfStaffInfoCovid = (req, res, next) => {
 };
 
 exports.getAdminManager = (req, res, next) => {
+  const updateLink = "/admin/adminManager";
+  RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+    rDLink.updateLink(updateLink);
+  });
   res.render("admin/adminManager", {
     staff: req.staff,
     pageTitle: "CovidStaffs",
@@ -412,6 +450,10 @@ exports.getAdminManager = (req, res, next) => {
 exports.getListStaffs = (req, res, next) => {
   Staff.find({ role: "staff", department: req.staff.department })
     .then((staffs) => {
+      const updateLink = "/admin/listStaffs";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       return res.render("admin/listStaffs", {
         staffs: staffs,
         staff: req.staff,
@@ -431,6 +473,10 @@ exports.getStaffInfo = (req, res, next) => {
   const staffId = req.params.staffId;
   Staff.findById(staffId)
     .then((staffInfo) => {
+      const updateLink = `/admin/staff/infomation/${staffId}`;
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       return res.render("staff/getStaffInfo", {
         staffInfo: staffInfo,
         staff: req.staff,
@@ -473,7 +519,10 @@ exports.getStaffSession = (req, res, next) => {
           const sessionsSort = sessions.sort((a, b) =>
             a.checkIn > b.checkIn ? 1 : a.checkIn < b.checkIn ? -1 : 1
           );
-
+          const updateLink = `/admin/staff/session/${staffId}`;
+          RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+            rDLink.updateLink(updateLink);
+          });
           return res.render("admin/staff-session", {
             staffInfo: staffInfo,
             adminName: null,
@@ -511,6 +560,31 @@ exports.postDeleteSession = (req, res, next) => {
       Session.findByIdAndDelete(session._id).then((result) => {
         console.log("destroyed Session");
         const staffId = session.staffId;
+        const updateLink = `/admin/staff/session/${staffId}`;
+        RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+          rDLink.updateLink(updateLink);
+        });
+        return res.redirect(`/admin/staff/session/${staffId}`);
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
+};
+
+exports.postConfirmSession = (req, res, next) => {
+  const sessionId = req.body.sessionId;
+  Session.findById(sessionId)
+    .then((session) => {
+      session.confirm = true;
+      return session.save().then((result) => {
+        const staffId = session.staffId;
+        const updateLink = `/admin/staff/session/${staffId}`;
+        RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+          rDLink.updateLink(updateLink);
+        });
         return res.redirect(`/admin/staff/session/${staffId}`);
       });
     })
@@ -625,7 +699,10 @@ exports.postDetailMonth = (req, res, next) => {
             salaryScale: req.staff.salaryScale,
             monthString: monthString,
           };
-
+          const updateLink = `/admin/staff/session/${staffId}`;
+          RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+            rDLink.updateLink(updateLink);
+          });
           res.render("admin/staff-session", {
             staffInfo: staffInfo,
             sessions: sessions,
@@ -659,6 +736,10 @@ exports.postDeleteStaff = (req, res, next) => {
   Staff.findByIdAndDelete(staffId)
     .then((result) => {
       console.log("DESTROYED STAFF.");
+      const updateLink = "/admin/listStaffs";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       return res.redirect("/admin/listStaffs");
     })
     .catch((err) => {

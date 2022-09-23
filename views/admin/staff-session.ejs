@@ -64,13 +64,14 @@
                     <table class="table table-hover table-bordered">
                         <thead>
                             <tr>
-                              <th scope="col">Ngày</th>
-                              <th scope="col">Bắt đầu</th>
-                              <th scope="col">Kết thúc</th>
-                              <th scope="col">Nơi làm việc</th>
-                              <th scope="col">Tổng giờ làm</th>
+                              <th scope="col" class="text-center">Ngày</th>
+                              <th scope="col" class="text-center">Bắt đầu</th>
+                              <th scope="col" class="text-center">Kết thúc</th>
+                              <th scope="col" class="text-center">Nơi làm việc</th>
+                              <th scope="col" class="text-center">Tổng giờ làm</th>
                               <!-- <th scope="col">Giờ làm thêm</th> -->
-                              <th scope="col">Xóa</th>
+                              <th scope="col" class="text-center">Xóa</th>
+                              <th scope="col" class="text-center">Xác nhận</th>
                             </tr>
                           </thead>
                        
@@ -79,19 +80,40 @@
                             sessions.forEach(session=> { %>
 
                               <tr>
-                                <td scope="row"><%= session.checkIn.getDate()
+                                <td scope="row" class="text-center"><%= session.checkIn.getDate()
                                     .toString()
                                     .concat(" / " + (session.checkIn.getMonth()+1).toString()+"/"+session.checkIn.getFullYear()) %></td>
-                                <td> <%= session.checkIn.getHours().toString().concat(":").concat(session.checkIn.getMinutes()>=10?session.checkIn.getMinutes().toString():"0"+session.checkIn.getMinutes() ) %></td>
-                                <td> <% if(session.checkOut) {%> <%=session.checkOut.getHours().toString().concat(":").concat(session.checkOut.getMinutes()>=10?session.checkOut.getMinutes().toString():"0"+session.checkOut.getMinutes() )%><%} else{%>--<%}  %></td>
-                                <td><%= session.workPlace %></td>
-                                <td><%if(session.checkOut){%> <%=((session.checkOut-session.checkIn)/3600000).toFixed(1) %> <%} else{%><%}  %></td>
+                                <td class="text-center"> <%= session.checkIn.getHours().toString().concat(":").concat(session.checkIn.getMinutes()>=10?session.checkIn.getMinutes().toString():"0"+session.checkIn.getMinutes() ) %></td>
+                                <td class="text-center"> <% if(session.checkOut) {%> <%=session.checkOut.getHours().toString().concat(":").concat(session.checkOut.getMinutes()>=10?session.checkOut.getMinutes().toString():"0"+session.checkOut.getMinutes() )%><%} else{%>--<%}  %></td>
+                                <td class="text-center"><%= session.workPlace %></td>
+                                <td class="text-center"><%if(session.checkOut){%> <%=((session.checkOut-session.checkIn)/3600000).toFixed(1) %> <%} else{%><%}  %></td>
                                 <!-- <td><% if(((session.checkOut-session.checkIn)/3600000)>8) {%><%= (((session.checkOut-session.checkIn)/3600000)-8).toFixed(2) %> <%} else{%> 0.00<%}  %></td> -->
-                              <td> <form action="/admin/delete-session" method="POST">
-                                <input type="hidden" name="sessionId" value="<%=session._id%>">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                 <button type="submit" class="btn btn-danger">Xóa</button>
-                              </form></td>
+                              <% if(session.confirm ||   !session.checkOut){%>
+                               <td></td>
+                                <%}else{%>
+                                  
+                                  
+                                    <td> <form class="text-center" action="/admin/delete-session" method="POST">
+                                      <input type="hidden" name="sessionId" value="<%=session._id%>">
+                                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                       <button type="submit" class="btn btn-danger">Xóa</button>
+                                    </form></td> 
+                                   
+                                  
+                                  <%}
+                              %>
+                              <%
+                              if(session.checkOut){%>
+
+                                <td> <form class="text-center" action="/admin/confirm-session" method="POST">
+                                  <input type="hidden" name="sessionId" value="<%=session._id%>">
+                                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                   <button type="submit" class="btn btn-success "><%=session.confirm?'Đã xác nhận':'Xác nhận'%></button>
+                                </form></td>
+                                <%}else{%>
+                                  <td></td><%}
+
+                              %>
                             </tr>
                               <%}
                               )

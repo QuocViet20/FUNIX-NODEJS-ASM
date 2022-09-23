@@ -1,19 +1,25 @@
 const CovidInfo = require("../models/covidInfo");
 const Session = require("../models/session");
 const Staff = require("../models/staff");
+const RedirectLink = require("../models/redirectLink");
 
 const { validationResult } = require("express-validator/check");
 
 const fileHelper = require("../util/file");
 
-const ITEMS_PER_PAGE = 1;
+const ITEMS_PER_PAGE = 3;
 
 exports.getStaff = (req, res, next) => {
   Session.find({
     staffId: req.staff._id,
   })
+
     .then((sessions) => {
-      res.render("staff/getStaff", {
+      const updateLink = "/staff";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
+      return res.render("staff/getStaff", {
         endSession: sessions[sessions.length - 1],
         staff: req.staff,
         pageTitle: "staff",
@@ -27,7 +33,11 @@ exports.getStaff = (req, res, next) => {
     });
 };
 exports.getStaffStart = (req, res, next) => {
-  res.render("staff/getStaffStart", {
+  const updateLink = "/staff/start";
+  RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+    rDLink.updateLink(updateLink);
+  });
+  return res.render("staff/getStaffStart", {
     staff: req.staff,
     pageTitle: "staff-start",
     path: "/staff",
@@ -42,7 +52,7 @@ exports.postAddSession = (req, res, next) => {
   const session = new Session({
     workPlace: workPlace,
     workingStatus: true,
-    workingAll: true,
+    confirm: false,
     checkIn: new Date(),
     staffId: req.staff._id,
   });
@@ -52,7 +62,10 @@ exports.postAddSession = (req, res, next) => {
       if (CheckOutFilter.length > 0) {
         const errMsg =
           "Bạn vẫn đang trong trạng thái đang làm việc không thể bắt đầu phiên làm việc mới.";
-
+        const updateLink = "/staff/startCheckIn";
+        RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+          rDLink.updateLink(updateLink);
+        });
         return res.render("staff/sessionCheckIn", {
           errMsg: errMsg,
           staff: req.staff,
@@ -78,6 +91,10 @@ exports.postAddSession = (req, res, next) => {
 exports.getStaffCheckIn = (req, res, next) => {
   Session.find({ staffId: req.staff._id })
     .then((sessions) => {
+      const updateLink = "/staff/startCheckIn";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       res.render("staff/sessionCheckIn", {
         session: sessions[sessions.length - 1],
         getTime: sessions[sessions.length - 1].checkIn
@@ -112,10 +129,14 @@ exports.updateSession = (req, res, next) => {
           .then((session) => {
             session.checkOut = d;
             session.workingStatus = false;
-            session.workingAll = false;
+            session.confirm = false;
             return session.save();
           })
           .then((result) => {
+            const updateLink = "/staff/sessions";
+            RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+              rDLink.updateLink(updateLink);
+            });
             res.redirect("/staff/sessions");
           })
           .catch((err) => {
@@ -129,7 +150,7 @@ exports.updateSession = (req, res, next) => {
         return res.render("staff/getSessions", {
           errMsg: errMsg,
           pageTitle: "errorCheckOut",
-          path: "/staff",
+          path: "",
         });
       }
     })
@@ -156,15 +177,18 @@ exports.getSessions = (req, res, next) => {
         const workTime = s.checkOut - s.checkIn;
         sum += workTime;
       });
-
       const tongTimes = (sum / 3600000).toFixed(1);
+      const updateLink = "/staff/sessions";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       res.render("staff/getSessions", {
         sessions: sessionsTd,
         tongWorkTimes: tongTimes,
         staff: req.staff,
         staffName: req.staff.name,
         pageTitle: "staff-Sessions",
-        path: "/staff",
+        path: "",
         errMsg: null,
       });
     })
@@ -177,6 +201,10 @@ exports.getSessions = (req, res, next) => {
 };
 
 exports.getFormDayoff = (req, res, next) => {
+  const updateLink = "/staff/formDayoff";
+  RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+    rDLink.updateLink(updateLink);
+  });
   res.render("staff/formDayoff", {
     staff: req.staff,
     pageTitle: "formDayoff",
@@ -200,6 +228,10 @@ exports.postAddAnnualLeav = (req, res, next) => {
   const errors = validationResult(req);
   console.log(errors.array());
   if (!errors.isEmpty()) {
+    const updateLink = "/staff/formDayoff";
+    RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+      rDLink.updateLink(updateLink);
+    });
     return res.status(422).render("staff/formDayoff", {
       staff: req.staff,
       pageTitle: "errDayoff",
@@ -215,6 +247,10 @@ exports.postAddAnnualLeav = (req, res, next) => {
   }
   if (staffAnnualLeave.leffDayOff === 0) {
     const errMsg = "Bạn đã dùng hết số ngày nghỉ phép";
+    const updateLink = "/staff/formDayoff";
+    RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+      rDLink.updateLink(updateLink);
+    });
     return res.render("staff/formDayoff", {
       staff: req.staff,
       pageTitle: "errDayoff",
@@ -230,6 +266,10 @@ exports.postAddAnnualLeav = (req, res, next) => {
   }
   if (quantityDays / 8 > staffAnnualLeave.leffDayOff) {
     const errMsg = "Số giờ bạn chọn quá tối đa bạn có thể chọn";
+    const updateLink = "/staff/formDayoff";
+    RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+      rDLink.updateLink(updateLink);
+    });
     return res.render("staff/formDayoff", {
       staff: req.staff,
       pageTitle: "errDayoff",
@@ -246,6 +286,10 @@ exports.postAddAnnualLeav = (req, res, next) => {
   if (quantityDays > 8) {
     const errMsg =
       "Một ngày bạn chỉ chọn tối đa 8h, vui lòng trở lại và chọn lại!!!";
+    const updateLink = "/staff/formDayoff";
+    RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+      rDLink.updateLink(updateLink);
+    });
     return res.render("staff/formDayoff", {
       staff: req.staff,
       pageTitle: "errDayoff",
@@ -273,6 +317,10 @@ exports.postAddAnnualLeav = (req, res, next) => {
       .save()
       .then((result) => {
         console.log(result);
+        const updateLink = "/staff/dayoff";
+        RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+          rDLink.updateLink(updateLink);
+        });
         res.redirect("/staff/dayoff");
       })
       .catch((err) => {
@@ -293,6 +341,10 @@ exports.getDayoff = (req, res, next) => {
   //     "/" + (dateTmp.getMonth() + 1).toString() + "/" + dateTmp.getFullYear()
   //   );
   // console.log(dateOff);
+  const updateLink = "/staff/dayoff";
+  RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+    rDLink.updateLink(updateLink);
+  });
   res.render("staff/getDayoff", {
     staff: req.staff,
     annualLeave: annualLeave,
@@ -304,6 +356,10 @@ exports.getDayoff = (req, res, next) => {
 };
 
 exports.getStaffInfo = (req, res, next) => {
+  const updateLink = "/staff/information";
+  RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+    rDLink.updateLink(updateLink);
+  });
   res.render("staff/getStaffInfo", {
     staffInfo: null,
     staff: req.staff,
@@ -322,6 +378,10 @@ exports.staffUpdateImage = (req, res, next) => {
   return req.staff
     .save()
     .then((result) => {
+      const updateLink = "/staff/information";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       res.redirect("/staff/information");
     })
     .catch((err) => {
@@ -361,7 +421,10 @@ exports.getInfoSessions = (req, res, next) => {
           const sessionsSort = sessions.sort((a, b) =>
             a.checkIn > b.checkIn ? 1 : a.checkIn < b.checkIn ? -1 : 1
           );
-
+          const updateLink = "/staff/infoSessions";
+          RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+            rDLink.updateLink(updateLink);
+          });
           res.render("staff/getInfoSessions", {
             adminName: adminName,
             sessions: sessionsSort,
@@ -504,7 +567,10 @@ exports.postSalaryMonth = (req, res, next) => {
         salaryScale: req.staff.salaryScale,
         monthString: monthString,
       };
-
+      const updateLink = "/staff/infoSessions";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       res.render("staff/getInfoSessions", {
         sessions: sessions,
         dayOffs: dayOffsSort,
@@ -542,6 +608,11 @@ exports.getFormCovidInfo = (req, res, next) => {
       if (covidInfos.length > 0) {
         const vaccine1 = covidInfos[covidInfos.length - 1].vaccinnated[0];
         const vaccine2 = covidInfos[covidInfos.length - 1].vaccinnated[1];
+
+        const updateLink = "/staff/form-covidInfo";
+        RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+          rDLink.updateLink(updateLink);
+        });
         return res.render("staff/formCovidInfo", {
           covidInfo: covidInfos[covidInfos.length - 1],
           vaccine1: vaccine1,
@@ -552,6 +623,10 @@ exports.getFormCovidInfo = (req, res, next) => {
           errMsg: message,
         });
       } else {
+        const updateLink = "/staff/form-covidInfo";
+        RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+          rDLink.updateLink(updateLink);
+        });
         return res.render("staff/formCovidInfo", {
           covidInfo: null,
           staff: req.staff,
@@ -612,6 +687,10 @@ exports.postAddCovidInfo = (req, res, next) => {
   covidInfo
     .save()
     .then((result) => {
+      const updateLink = "/staff/covidInfo";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       res.redirect("/staff/covidInfo");
     })
     .catch((err) => {
@@ -624,6 +703,10 @@ exports.postAddCovidInfo = (req, res, next) => {
 exports.getCovidInfo = (req, res, next) => {
   CovidInfo.find()
     .then((covidInfos) => {
+      const updateLink = "/staff/covidInfo";
+      RedirectLink.findOne({ staffId: req.staff._id }).then((rDLink) => {
+        rDLink.updateLink(updateLink);
+      });
       res.render("staff/getCovidInfo", {
         covidInfo: covidInfos[covidInfos.length - 1],
         vaccine1: covidInfos[covidInfos.length - 1].vaccine,
