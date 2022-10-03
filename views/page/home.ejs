@@ -8,22 +8,25 @@
         <div class="container">
             <h1 class="text-center text-uppercase mt-4">Trang chủ công ty</h1>
             <hr/>
-            <div>
-                <h3 class="text-center text-uppercase mt-2">ứng dụng quản lý giờ làm việc nhân viên của công ty</h3>
-                <p style="color: #dd0e20;font-size:30px;">Vì do đây là ứng dụng giành cho người quản lý của công ty cần sẽ có 1 tài khoản admin để tạo và quản lý các nhân viên khác</p>
-                <div class="mt-2 d-flex px-2">
-                <p>Tài khoản đăng nhập của Admin:</p> <p style="color: #0841ba; padding-left: 10px;" >admin@gmail.com</p>
-                </div>
-                <div class=" d-flex px-2">
-                    <p>Mật khẩu:</p> <p style="color: #0841ba; padding-left: 10px;" >quocviet</p>
-                </div>
-                <div class="mt-2 d-flex px-2">
-                    <p>Tài khoản đăng nhập của 1 nhân viên:</p> <p style="color: #0841ba; padding-left: 10px;" >test1@gmail.com</p>
+            <% if(!isAuthenticated){%>
+                <div>
+                    <h3 class="text-center text-uppercase mt-2">ứng dụng quản lý giờ làm việc nhân viên của công ty</h3>
+                    <p style="color: #dd0e20;font-size:30px;">Vì do đây là ứng dụng giành cho người quản lý của công ty cần sẽ có 1 tài khoản admin để tạo và quản lý các nhân viên khác</p>
+                    <div class="mt-2 d-flex px-2">
+                    <p>Tài khoản đăng nhập của Admin:</p> <p style="color: #0841ba; padding-left: 10px;" >admin@gmail.com</p>
                     </div>
                     <div class=" d-flex px-2">
                         <p>Mật khẩu:</p> <p style="color: #0841ba; padding-left: 10px;" >quocviet</p>
                     </div>
-            </div>
+                    <div class="mt-2 d-flex px-2">
+                        <p>Tài khoản đăng nhập của 1 nhân viên:</p> <p style="color: #0841ba; padding-left: 10px;" >test1@gmail.com</p>
+                        </div>
+                        <div class=" d-flex px-2">
+                            <p>Mật khẩu:</p> <p style="color: #0841ba; padding-left: 10px;" >quocviet</p>
+                        </div>
+                </div>
+                <%}
+            %>
          </div>
 
     </main>
