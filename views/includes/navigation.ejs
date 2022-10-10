@@ -33,7 +33,7 @@
   <nav class="bg-info">
     <nav class=" container navbar navbar-expand-sm navbar-dark bg-info">
       <div class="container-fluid">
-      
+         
           <a class="navbar-brand  text-uppercase <%= path==='/homePage' ? 'text-warning' : 'text-dark' %>" href="/homePage">Home</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
             <span class="navbar-toggler-icon"></span>
@@ -87,11 +87,11 @@
                     <a class="nav-link <%= path==='/login' ? 'text-warning' : 'text-dark' %>  text-uppercase"  href="/login" >Login</a>
                   </li> 
                   <%} else{%>
+                  
                     <li class="nav-item">
-    
                       <form class="nav-item " action="/logout" method="POST">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button type="submit" class="btn-info text-uppercase " style="border:none ;">Logout</button>
+                        <button type="submit" class="btn-info text-uppercase " style="border:none ; margin-left: 5px;">Logout</button>
                       </form>
                     </li>
                     <%}

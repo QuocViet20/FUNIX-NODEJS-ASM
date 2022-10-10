@@ -24,7 +24,30 @@ router.post(
   authController.postLogin
 );
 
-// /postLogout => POST
+// postLogout => POST
 router.post("/logout", authController.postLogout);
+
+// getNewPassword ==>GET
+router.get("/resetPassword", authController.getNewPassword);
+
+// /postResetPassword => POST
+router.post(
+  "/resetPassword",
+  [
+    body("email")
+      .isEmail()
+      .withMessage("Please enter a valid email address.")
+      .normalizeEmail(),
+    body("password", "Password has to be valid.")
+      .isLength({ min: 6 })
+      .isAlphanumeric()
+      .trim(),
+    body("newPassword", "Password has to be valid.")
+      .isLength({ min: 6 })
+      .isAlphanumeric()
+      .trim(),
+  ],
+  authController.postResetPassword
+);
 
 module.exports = router;

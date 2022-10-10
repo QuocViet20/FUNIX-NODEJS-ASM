@@ -26,8 +26,7 @@ exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const errors = validationResult(req);
-  console.log(errors);
-  console.log(errors.array());
+
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/login", {
       path: "/login",
@@ -98,4 +97,92 @@ exports.postLogout = (req, res, next) => {
     console.log(err);
     res.redirect("/login");
   });
+};
+
+exports.getNewPassword = (req, res, next) => {
+  let message = req.flash("error");
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+  res.render("auth/resetPassword", {
+    path: "/resetPassword",
+    pageTitle: "resetPassword",
+    errorMessage: message,
+    oldInput: {
+      email: "",
+      password: "",
+      newPassword: "",
+    },
+    validationErrors: [],
+    staff: req.staff,
+  });
+};
+
+exports.postResetPassword = (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const newPassword = req.body.newPassword;
+  const errors = validationResult(req);
+  let newStaff;
+  console.log(errors);
+  console.log(errors.array());
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/resetPassword", {
+      path: "/resetPassword",
+      pageTitle: "resetPassword",
+      errorMessage: errors.array()[0].msg,
+      oldInput: { email: email, password: password, newPassword: newPassword },
+      validationErrors: errors.array(),
+    });
+  }
+  Staff.findOne({ email: email })
+    .then((staff) => {
+      if (!staff) {
+        return res.status(422).render("auth/resetPassword", {
+          path: "/resetPassword",
+          pageTitle: "resetPassword",
+          errorMessage: "invalid email or password",
+          oldInput: {
+            email: email,
+            password: password,
+            newPassword: newPassword,
+          },
+          validationErrors: errors.array(),
+        });
+      }
+      newStaff = staff;
+      bcrypt
+        .compare(password, newStaff.password)
+        .then((doMatch) => {
+          if (doMatch) {
+            bcrypt.hash(newPassword, 12).then((hashedPassword) => {
+              newStaff.password = hashedPassword;
+              return newStaff.save();
+            });
+            return res.redirect("/login");
+          }
+          return res.status(422).render("auth/resetPassword", {
+            path: "/resetPassword",
+            pageTitle: "resetPassword",
+            errorMessage: "invalid email or password",
+            oldInput: {
+              email: email,
+              password: password,
+              newPassword: newPassword,
+            },
+            validationErrors: errors.array(),
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect("/resetPassword");
+        });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(err);
+    });
 };
